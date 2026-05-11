@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lập trình Web — EHOU Docs</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>" />
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/subject.css" />
+  <style>:root { --subject-accent: var(--accent-cs); }</style>
+</head>
+<body>
+
+<div class="subject-layout">
+
+  <!-- Top bar -->
+  <nav class="subject-topbar">
+    <a href="../index.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Về trang chủ
+    </a>
+    <div class="topbar-breadcrumb">
+      <span class="sep">/</span>
+      <span class="topbar-subject-name">Lập trình Web</span>
+    </div>
+    <div class="topbar-progress">
+      <span>Tiến độ</span>
+      <div class="progress-bar"><div class="progress-fill" style="width: 40%"></div></div>
+      <span>40%</span>
+    </div>
+  </nav>
+
+  <!-- Mobile TOC toggle -->
+  <button class="mobile-toc-toggle" id="mobile-toc-toggle">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="toggle-icon" style="transition:transform .2s"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    <span class="toggle-label">Mục lục</span>
+  </button>
+
+  <!-- Sidebar -->
+  <aside class="subject-sidebar">
+    <div class="sidebar-inner">
+      <div class="subject-header-sidebar">
+        <div class="subject-icon-big">🌐</div>
+        <div class="subject-name-sidebar">Lập trình Web</div>
+        <div class="subject-code-sidebar">WEB · Năm 2</div>
+      </div>
+
+      <div class="toc-label">Nội dung</div>
+      <ul class="toc-list">
+        <li class="toc-item">
+          <span class="toc-link active" data-section="intro">
+            <span class="toc-dot"></span>
+            <span class="toc-num">01</span>
+            Giới thiệu
+          </span>
+        </li>
+        <li class="toc-item">
+          <span class="toc-link" data-section="html">
+            <span class="toc-dot"></span>
+            <span class="toc-num">02</span>
+            HTML cơ bản
+          </span>
+        </li>
+        <li class="toc-item">
+          <span class="toc-link" data-section="css">
+            <span class="toc-dot"></span>
+            <span class="toc-num">03</span>
+            CSS & Styling
+          </span>
+        </li>
+        <li class="toc-item">
+          <span class="toc-link" data-section="javascript">
+            <span class="toc-dot"></span>
+            <span class="toc-num">04</span>
+            JavaScript
+          </span>
+        </li>
+        <li class="toc-item">
+          <span class="toc-link" data-section="responsive">
+            <span class="toc-dot"></span>
+            <span class="toc-num">05</span>
+            Responsive Design
+          </span>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="subject-content">
+
+    <div class="content-hero">
+      <span class="content-hero-badge">🌐 IT · Năm 2</span>
+      <h1 class="content-hero-title">Lập trình Web</h1>
+      <p class="content-hero-desc">Học cách xây dựng website từ nền tảng: cấu trúc HTML, trang trí CSS, và tương tác JavaScript. Từ trang tĩnh đến ứng dụng web động.</p>
+    </div>
+
+    <div class="content-section" id="intro">
+      <h2>Giới thiệu môn học</h2>
+      <p>Lập trình Web là môn học nền tảng cho ngành CNTT, cung cấp kỹ năng xây dựng giao diện và ứng dụng trên nền web — môi trường phổ biến nhất hiện nay.</p>
+
+      <div class="key-box">
+        <span class="box-label">Mục tiêu</span>
+        Sau môn học này, bạn có thể tự xây dựng một website hoàn chỉnh từ thiết kế đến triển khai.
+      </div>
+
+      <h3>Ba trụ cột của Web</h3>
+      <table>
+        <thead>
+          <tr><th>Công nghệ</th><th>Vai trò</th><th>Ví dụ</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>HTML</strong></td><td>Cấu trúc nội dung</td><td>Tiêu đề, đoạn văn, hình ảnh</td></tr>
+          <tr><td><strong>CSS</strong></td><td>Trình bày, giao diện</td><td>Màu sắc, font chữ, layout</td></tr>
+          <tr><td><strong>JavaScript</strong></td><td>Tương tác, logic</td><td>Click button, gọi API</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="content-section" id="html">
+      <h2>HTML cơ bản</h2>
+      <p>HTML (HyperText Markup Language) là ngôn ngữ đánh dấu định nghĩa <strong>cấu trúc</strong> của trang web. Trình duyệt đọc HTML và hiển thị nội dung tương ứng.</p>
+
+      <h3>Cấu trúc trang HTML</h3>
+      <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="vi"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;title&gt;Tiêu đề trang&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Xin chào thế giới!&lt;/h1&gt;
+    &lt;p&gt;Đây là đoạn văn đầu tiên.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+      <h3>Các thẻ quan trọng</h3>
+      <ul>
+        <li><code>&lt;h1&gt; — &lt;h6&gt;</code>: Tiêu đề, từ lớn đến nhỏ</li>
+        <li><code>&lt;p&gt;</code>: Đoạn văn bản</li>
+        <li><code>&lt;a href=""&gt;</code>: Liên kết</li>
+        <li><code>&lt;img src="" alt=""&gt;</code>: Hình ảnh</li>
+        <li><code>&lt;ul&gt;</code> / <code>&lt;ol&gt;</code> / <code>&lt;li&gt;</code>: Danh sách</li>
+        <li><code>&lt;div&gt;</code> / <code>&lt;span&gt;</code>: Container tổng quát</li>
+        <li><code>&lt;input&gt;</code>, <code>&lt;form&gt;</code>, <code>&lt;button&gt;</code>: Form nhập liệu</li>
+      </ul>
+
+      <div class="note-box">
+        <span class="box-label">Ghi chú</span>
+        HTML5 giới thiệu các thẻ semantic như <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;footer&gt;</code> — giúp code có ý nghĩa hơn và tốt cho SEO.
+      </div>
+    </div>
+
+    <div class="content-section" id="css">
+      <h2>CSS & Styling</h2>
+      <p>CSS (Cascading Style Sheets) kiểm soát <strong>giao diện</strong>: màu sắc, kích thước, vị trí, và animation của các phần tử HTML.</p>
+
+      <h3>Cú pháp CSS</h3>
+      <pre><code>selector {
+  property: value;
+}
+
+/* Ví dụ */
+h1 {
+  color: #6c5ce7;
+  font-size: 2rem;
+  font-weight: 700;
+}</code></pre>
+
+      <h3>Box Model</h3>
+      <p>Mọi phần tử HTML đều là một "hộp" với 4 lớp từ trong ra ngoài:</p>
+      <table>
+        <thead><tr><th>Lớp</th><th>Mô tả</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Content</strong></td><td>Nội dung thực (text, image)</td></tr>
+          <tr><td><strong>Padding</strong></td><td>Khoảng cách từ content đến border</td></tr>
+          <tr><td><strong>Border</strong></td><td>Đường viền xung quanh</td></tr>
+          <tr><td><strong>Margin</strong></td><td>Khoảng cách từ border đến phần tử bên ngoài</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Flexbox — Layout hiện đại</h3>
+      <pre><code>.container {
+  display: flex;
+  justify-content: center;   /* ngang */
+  align-items: center;       /* dọc */
+  gap: 1rem;
+}</code></pre>
+
+      <div class="tip-box">
+        <span class="box-label">Mẹo</span>
+        Dùng <code>display: flex</code> để căn giữa — đây là cách phổ biến và dễ nhất hiện nay.
+      </div>
+    </div>
+
+    <div class="content-section" id="javascript">
+      <h2>JavaScript</h2>
+      <p>JavaScript làm cho trang web <strong>tương tác</strong> — xử lý sự kiện click, validate form, gọi API, thay đổi nội dung mà không cần reload trang.</p>
+
+      <h3>Khai báo biến</h3>
+      <pre><code>const name = "Minh Đức";   // hằng số, không đổi
+let age = 21;               // biến, có thể thay đổi
+var old = true;             // cũ, tránh dùng</code></pre>
+
+      <h3>Xử lý sự kiện DOM</h3>
+      <pre><code>const btn = document.getElementById('my-btn');
+
+btn.addEventListener('click', () => {
+  alert('Bạn vừa click!');
+});</code></pre>
+
+      <h3>Fetch API — Gọi dữ liệu</h3>
+      <pre><code>async function getData() {
+  const res = await fetch('https://api.example.com/data');
+  const json = await res.json();
+  console.log(json);
+}</code></pre>
+
+      <div class="warn-box">
+        <span class="box-label">Lưu ý</span>
+        Luôn dùng <code>const</code> mặc định, chỉ dùng <code>let</code> khi cần reassign. Không dùng <code>var</code>.
+      </div>
+    </div>
+
+    <div class="content-section" id="responsive">
+      <h2>Responsive Design</h2>
+      <p>Responsive design đảm bảo website hiển thị đẹp trên mọi thiết bị — từ điện thoại (320px) đến màn hình lớn (1920px+).</p>
+
+      <h3>Media Queries</h3>
+      <pre><code>/* Mobile first — viết cho mobile trước */
+.card {
+  width: 100%;
+}
+
+/* Tablet trở lên */
+@media (min-width: 640px) {
+  .card { width: 50%; }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .card { width: 33.33%; }
+}</code></pre>
+
+      <h3>Viewport Meta Tag</h3>
+      <pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</code></pre>
+
+      <div class="key-box">
+        <span class="box-label">Nguyên tắc</span>
+        <strong>Mobile-first</strong>: Thiết kế cho màn hình nhỏ trước, sau đó mở rộng dần cho màn hình lớn hơn bằng media queries.
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
