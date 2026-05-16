@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IT02 — Kiến trúc máy tính</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>" />
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/subject.css" />
+  <style>
+    :root { --subject-accent: var(--accent-cs); }
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #262c42;
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 2;
+      color: #8896b0;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .code-block .ct { color: #2fc4b2; }
+    .code-block .ca { color: #f0a500; }
+    .code-block .cg { color: #4ade80; }
+    .code-block .cd { color: #5c6880; }
+    .reg-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .reg-card {
+      background: var(--surface-2, #1c2030);
+      border: 1px solid #262c42;
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .reg-name {
+      font-family: monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--subject-accent);
+      min-width: 42px;
+      flex-shrink: 0;
+    }
+    .reg-desc { font-size: 14px; line-height: 1.5; }
+    .step-flow {
+      display: flex;
+      gap: 0;
+      margin: 16px 0;
+      flex-wrap: wrap;
+    }
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .step-box {
+      background: #1c2030;
+      border: 1px solid #262c42;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .step-arrow {
+      color: #5c6880;
+      font-size: 18px;
+      padding: 0 6px;
+    }
+    .bus-card {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 14px 18px;
+      background: #1c2030;
+      border: 1px solid #262c42;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .bus-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .slides-link-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: linear-gradient(135deg, #1c2030 0%, #232a40 100%);
+      border: 1px solid var(--subject-accent);
+      border-radius: 12px;
+      padding: 18px 22px;
+      text-decoration: none;
+      color: inherit;
+      margin-bottom: 8px;
+      transition: background 0.15s;
+    }
+    .slides-link-card:hover { background: linear-gradient(135deg, #232a40 0%, #2a3350 100%); }
+    .slides-link-icon { font-size: 28px; flex-shrink: 0; }
+    .slides-link-title { font-size: 16px; font-weight: 700; color: var(--subject-accent); }
+    .slides-link-sub { font-size: 13px; color: #8896b0; margin-top: 2px; }
+    .slides-link-arrow { margin-left: auto; color: var(--subject-accent); font-size: 20px; }
+  </style>
+</head>
+<body>
+
+<div class="subject-layout">
+
+  <nav class="subject-topbar">
+    <a href="../index.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Về trang chủ
+    </a>
+    <div class="topbar-breadcrumb">
+      <span class="sep">/</span>
+      <span class="topbar-subject-name">IT02 — Kiến trúc máy tính</span>
+    </div>
+  </nav>
+
+  <button class="mobile-toc-toggle" id="mobile-toc-toggle">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="toggle-icon" style="transition:transform .2s"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    <span class="toggle-label">Mục lục</span>
+  </button>
+
+  <aside class="subject-sidebar">
+    <div class="sidebar-inner">
+      <div class="subject-header-sidebar">
+        <div class="subject-icon-big">💻</div>
+        <div class="subject-name-sidebar">Kiến trúc máy tính</div>
+        <div class="subject-code-sidebar">IT02</div>
+      </div>
+      <div class="toc-label">Nội dung</div>
+      <ul class="toc-list">
+        <li class="toc-item"><span class="toc-link active" data-section="slides"><span class="toc-dot"></span><span class="toc-num">00</span>Slides bài giảng</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="lich-su-co-khi"><span class="toc-dot"></span><span class="toc-num">01</span>Lịch sử: Cơ khí</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="4-the-he"><span class="toc-dot"></span><span class="toc-num">02</span>4 thế hệ máy tính</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="von-neumann"><span class="toc-dot"></span><span class="toc-num">03</span>Kiến trúc Von Neumann</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="he-nhi-phan"><span class="toc-dot"></span><span class="toc-num">04</span>Hệ nhị phân & Bit</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="chuyen-doi"><span class="toc-dot"></span><span class="toc-num">05</span>Chuyển đổi cơ số</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="so-am"><span class="toc-dot"></span><span class="toc-num">06</span>Số âm & Bù 2</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="ieee754"><span class="toc-dot"></span><span class="toc-num">07</span>IEEE 754</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="cpu-thanh-ghi"><span class="toc-dot"></span><span class="toc-num">08</span>CPU & Thanh ghi</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="bus"><span class="toc-dot"></span><span class="toc-num">09</span>Bus hệ thống</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="tap-lenh"><span class="toc-dot"></span><span class="toc-num">10</span>Tập lệnh cơ bản</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="chu-ky-lenh"><span class="toc-dot"></span><span class="toc-num">11</span>Chu kỳ lệnh</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="vi-thao-tac"><span class="toc-dot"></span><span class="toc-num">12</span>Vi thao tác</span></li>
+        <li class="toc-item"><span class="toc-link" data-section="on-thi"><span class="toc-dot"></span><span class="toc-num">13</span>Checklist ôn thi</span></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="subject-content">
+
+    <div class="content-hero">
+      <span class="content-hero-badge">💻 IT02 · Tin học</span>
+      <h1 class="content-hero-title">Kiến trúc máy tính</h1>
+      <p class="content-hero-desc">Từ bit đến CPU — lịch sử, hệ nhị phân, kiến trúc Von Neumann và cách CPU thực thi lệnh từng bước.</p>
+    </div>
+
+    <!-- 00 Slides -->
+    <div class="content-section" id="slides">
+      <h2>Slides bài giảng</h2>
+      <a href="IT02_Slides_Bai1.html" class="slides-link-card" target="_blank">
+        <div class="slides-link-icon">🖥️</div>
+        <div>
+          <div class="slides-link-title">Bài 1 — Kiến trúc cơ bản & Nguyên lý hoạt động</div>
+          <div class="slides-link-sub">20 slide · Lịch sử · Hệ nhị phân · Von Neumann · CPU · Chu kỳ lệnh</div>
+        </div>
+        <div class="slides-link-arrow">→</div>
+      </a>
+    </div>
+
+    <!-- 01 Lịch sử cơ khí -->
+    <div class="content-section" id="lich-su-co-khi">
+      <h2>Lịch sử: Máy tính cơ khí</h2>
+      <p>Trước khi có điện tử, con người đã chế tạo các máy tính cơ khí bằng bánh răng và đòn bẩy.</p>
+
+      <table>
+        <thead><tr><th>Thời kỳ</th><th>Tác giả / Máy</th><th>Đặc điểm</th></tr></thead>
+        <tbody>
+          <tr><td>Thế kỷ 17</td><td><strong>Blaise Pascal</strong> — Máy tính cơ khí đầu tiên</td><td>Chỉ làm được cộng và trừ. Nặng nề, chậm, hay hỏng.</td></tr>
+          <tr><td>Thế kỷ 19</td><td><strong>Babbage</strong> — Difference Engine</td><td>Tự động hóa nhiều bước tính toán, không cần can thiệp tay giữa chừng.</td></tr>
+          <tr><td>Thế kỷ 19</td><td><strong>Babbage</strong> — Analytical Engine</td><td>Ý tưởng máy tính đa năng, điều khiển bằng chương trình. Chưa hoàn thành vì thiếu tài chính.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="warn-box">
+        <span class="box-label">Hạn chế chung</span>
+        Chậm (hoàn toàn cơ khí, bánh răng) · Cồng kềnh (chiếm cả căn phòng) · Giá cao · Hay hỏng do mài mòn cơ khí.
+      </div>
+    </div>
+
+    <!-- 02 4 thế hệ -->
+    <div class="content-section" id="4-the-he">
+      <h2>4 thế hệ máy tính điện tử</h2>
+      <div class="key-box">
+        <span class="box-label">Mốc thi quan trọng</span>
+        <strong>ENIAC (1943)</strong> → <strong>Von Neumann / EDVAC (1945)</strong> → <strong>Intel 4004 (1971)</strong> → <strong>IBM PC (1981)</strong>
+      </div>
+
+      <table>
+        <thead><tr><th>Thế hệ</th><th>Công nghệ</th><th>Mốc quan trọng</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Thế hệ 1</strong><br><em>1943–</em></td>
+            <td>Đèn điện tử chân không</td>
+            <td>
+              <strong>ENIAC</strong> (1943) — máy điện tử đầu tiên<br>
+              <strong>EDVAC</strong> (1945) — Von Neumann đề xuất kiến trúc mới<br>
+              <strong>IAS</strong> (1947) — chuẩn hóa kiến trúc
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Thế hệ 2</strong><br><em>1950s–</em></td>
+            <td>Bóng bán dẫn (Transistor)</td>
+            <td>
+              Thêm lệnh gọi chương trình con (CALL)<br>
+              Ngôn ngữ lập trình bậc cao xuất hiện<br>
+              Hệ điều hành batch monitor
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Thế hệ 3</strong><br><em>1960s–</em></td>
+            <td>Vi mạch tích hợp (IC)</td>
+            <td>
+              <strong>IBM System/360</strong> — tập lệnh chung cho cả dòng sản phẩm<br>
+              OS/360 — hệ điều hành đa nhiệm thực sự
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Thế hệ 4</strong><br><em>1971–</em></td>
+            <td>VLSI (mật độ rất cao)</td>
+            <td>
+              <strong>Intel 4004</strong> (1971) — CPU chip đầu tiên, 4-bit<br>
+              <strong>Intel 8086</strong> — nền tảng x86<br>
+              <strong>IBM PC</strong> (1981) — máy tính cá nhân phổ biến
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 03 Von Neumann -->
+    <div class="content-section" id="von-neumann">
+      <h2>Kiến trúc Von Neumann</h2>
+      <p>Đề xuất năm <strong>1945</strong>, mọi máy tính từ đó đến nay đều dựa trên thiết kế này. Gồm 3 thành phần chính kết nối qua Bus hệ thống.</p>
+
+      <table>
+        <thead><tr><th>Thành phần</th><th>Chức năng</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CPU</strong></td><td>Xử lý và tính toán, điều phối toàn bộ hệ thống</td></tr>
+          <tr><td><strong>Bộ nhớ chính</strong></td><td>Lưu cả chương trình lẫn dữ liệu trong cùng một vùng nhớ</td></tr>
+          <tr><td><strong>Thiết bị vào-ra</strong></td><td>Bàn phím, màn hình, ổ cứng...</td></tr>
+          <tr><td><strong>Bus hệ thống</strong></td><td>"Đường cao tốc" nối CPU, bộ nhớ và thiết bị vào-ra</td></tr>
+        </tbody>
+      </table>
+
+      <h3>3 nguyên lý Von Neumann</h3>
+      <table>
+        <thead><tr><th>#</th><th>Nguyên lý</th><th>Nội dung</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>1</strong></td>
+            <td><strong>Lưu trữ chung</strong></td>
+            <td>Chương trình và dữ liệu cùng lưu trong <strong>một bộ nhớ duy nhất</strong>, đều dưới dạng số nhị phân.</td>
+          </tr>
+          <tr>
+            <td><strong>2</strong></td>
+            <td><strong>Thực thi tuần tự</strong></td>
+            <td>CPU đọc <strong>từng lệnh một</strong> theo thứ tự từ bộ nhớ, giải mã và thực thi — lặp đi lặp lại liên tục.</td>
+          </tr>
+          <tr>
+            <td><strong>3</strong></td>
+            <td><strong>Bus kết nối</strong></td>
+            <td>Bus hệ thống là kênh truyền thống nhất — tất cả giao tiếp giữa các thành phần đều qua đây.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="key-box">
+        <span class="box-label">Đặc điểm nổi bật</span>
+        Bộ nhớ lưu chương trình và dữ liệu <strong>cùng 1 vùng</strong> — đây là điểm phân biệt Von Neumann với kiến trúc Harvard (dùng bộ nhớ riêng cho lệnh và dữ liệu).
+      </div>
+    </div>
+
+    <!-- 04 Hệ nhị phân -->
+    <div class="content-section" id="he-nhi-phan">
+      <h2>Hệ nhị phân & Bit</h2>
+      <p>Máy tính chỉ có 2 trạng thái điện: <strong>có điện (1)</strong> và <strong>không có điện (0)</strong>. Mọi thứ — số, chữ, hình ảnh, video — đều phải quy về chuỗi 0 và 1.</p>
+
+      <table>
+        <thead><tr><th>Đơn vị</th><th>Kích thước</th><th>Mô tả</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Bit</strong></td><td>1 bit</td><td>Đơn vị nhỏ nhất. Chỉ có 2 giá trị: 0 hoặc 1. Ví dụ: 1 bóng đèn — tắt (0) hoặc sáng (1).</td></tr>
+          <tr><td><strong>Byte</strong></td><td>8 bit</td><td>Đơn vị cơ bản thường dùng. 1 byte = 8 bit.</td></tr>
+          <tr><td><strong>Word</strong></td><td>16 / 32 / 64 bit</td><td>Số bit CPU xử lý trong một lần. Tùy kiến trúc CPU.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box">
+        <span class="box-label">Ví dụ: số 5 viết bằng 8 bit</span>
+        <code>0 0 0 0 0 <strong>1</strong> 0 <strong>1</strong></code><br>
+        Giá trị = <strong>4 + 1 = 5</strong> ✓ (bit màu xanh = 1, bit xám = 0)
+      </div>
+    </div>
+
+    <!-- 05 Chuyển đổi -->
+    <div class="content-section" id="chuyen-doi">
+      <h2>Chuyển đổi cơ số</h2>
+
+      <h3>Thập phân → Nhị phân (phần nguyên)</h3>
+      <p><strong>Quy tắc:</strong> Chia liên tiếp cho 2, ghi phần dư. Đọc phần dư <strong>từ dưới lên</strong>.</p>
+      <div class="code-block">
+<span class="cd">Ví dụ: 19₁₀ → nhị phân</span>
+
+<span class="ct">19</span> ÷ 2 = <span class="cd">9</span>  dư <span class="ca">1</span>  ← đọc sau
+<span class="ct"> 9</span> ÷ 2 = <span class="cd">4</span>  dư <span class="ca">1</span>
+<span class="ct"> 4</span> ÷ 2 = <span class="cd">2</span>  dư <span class="ca">0</span>
+<span class="ct"> 2</span> ÷ 2 = <span class="cd">1</span>  dư <span class="ca">0</span>
+<span class="ct"> 1</span> ÷ 2 = <span class="cd">0</span>  dư <span class="ca">1</span>  ← đọc trước
+
+→ 19₁₀ = <span class="cg">10011</span>₂
+      </div>
+      <p>Kiểm tra: <strong>10011</strong>₂ = 1×16 + 0×8 + 0×4 + 1×2 + 1×1 = 16 + 2 + 1 = <strong>19 ✓</strong></p>
+
+      <h3>Thập phân → Nhị phân (phần thập phân)</h3>
+      <p><strong>Quy tắc:</strong> Nhân liên tiếp với 2, lấy phần nguyên. Đọc <strong>từ trên xuống</strong>.</p>
+      <div class="code-block">
+<span class="cd">Ví dụ: 0.625₁₀ → nhị phân</span>
+
+0.625 × 2 = <span class="ca">1</span>.25  → lấy <span class="ca">1</span>, dư 0.25
+0.25  × 2 = <span class="cd">0</span>.50  → lấy <span class="cd">0</span>, dư 0.50
+0.50  × 2 = <span class="ca">1</span>.00  → lấy <span class="ca">1</span>, dư <span class="cg">0.00 ← DỪNG</span>
+
+→ 0.625₁₀ = <span class="cg">0.101</span>₂
+      </div>
+
+      <table>
+        <thead><tr><th>Khi nào dừng?</th><th>Giải thích</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Phần dư = 0</strong></td><td>Kết quả chính xác, dừng ngay.</td></tr>
+          <tr><td><strong>Phần dư lặp lại</strong></td><td>Số vô hạn tuần hoàn — không thể biểu diễn chính xác.</td></tr>
+          <tr><td><strong>Đủ n bit yêu cầu</strong></td><td>Làm tròn và dừng theo yêu cầu bài.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="warn-box">
+        <span class="box-label">Lưu ý quan trọng</span>
+        Số như <strong>0.1, 0.107, 0.3</strong> không có biểu diễn nhị phân hữu hạn. Đó là lý do <code>0.1 + 0.2 ≠ 0.3</code> trong máy tính!
+      </div>
+    </div>
+
+    <!-- 06 Số âm & Bù 2 -->
+    <div class="content-section" id="so-am">
+      <h2>Số âm & Bù 2 (Two's Complement)</h2>
+      <p>ALU bên trong CPU <strong>chỉ có mạch cộng</strong>. Khi tính <code>5 − 3</code>, máy tính phải thực hiện <code>5 + (−3)</code>. Vì vậy cần một cách biểu diễn số âm bằng 0 và 1.</p>
+
+      <div class="key-box">
+        <span class="box-label">Ý tưởng bù 2</span>
+        Trong hệ 4-bit (0–15): <strong>−3</strong> và <strong>+13</strong> có tác dụng <em>giống hệt nhau</em> khi cộng — giống kim đồng hồ quay thuận 13 bước hay ngược 3 bước đều đến cùng một chỗ.
+      </div>
+
+      <h3>Cách tính bù 2 (ví dụ: −5 trong 8 bit)</h3>
+      <table>
+        <thead><tr><th>Bước</th><th>Thao tác</th><th>Kết quả</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Bước 0</strong></td><td>Viết +5 ra nhị phân (8 bit)</td><td><code>0 0 0 0 0 1 0 1</code></td></tr>
+          <tr><td><strong>Bước 1</strong></td><td>Đảo tất cả bit (bù 1)</td><td><code>1 1 1 1 1 0 1 0</code></td></tr>
+          <tr><td><strong>Bước 2</strong></td><td>Cộng thêm 1</td><td><code>1 1 1 1 1 0 1 1</code> ← đây là −5</td></tr>
+        </tbody>
+      </table>
+
+      <div class="code-block">
+<span class="cd">Kiểm tra: (+5) + (−5) = ?</span>
+
+  <span class="ct">0 0 0 0 0 1 0 1</span>   (+5)
++ <span class="cg">1 1 1 1 1 0 1 1</span>   (−5)
+─────────────────
+<span class="ca">1</span> <span class="ct">0 0 0 0 0 0 0 0</span>
+<span class="cd">↑ bit thứ 9 rớt ra</span>
+
+→ còn lại: <span class="cg">00000000 = 0 ✓</span>
+      </div>
+
+      <div class="note-box">
+        <span class="box-label">Quy tắc đọc bit dấu</span>
+        Bit đầu tiên (bit cao nhất) = <strong>0</strong> → số <strong>dương</strong>.<br>
+        Bit đầu tiên = <strong>1</strong> → số <strong>âm</strong>.
+      </div>
+    </div>
+
+    <!-- 07 IEEE 754 -->
+    <div class="content-section" id="ieee754">
+      <h2>Số thực — Chuẩn IEEE 754 (32 bit)</h2>
+      <p>Chuẩn quốc tế để biểu diễn số dấu phẩy động trong máy tính. Số 32-bit chia thành 3 trường:</p>
+
+      <table>
+        <thead><tr><th>Trường</th><th>Số bit</th><th>Vị trí</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><strong>S</strong> (Sign)</td><td>1 bit</td><td>Bit 31</td><td>Dấu: 0 = dương, 1 = âm</td></tr>
+          <tr><td><strong>E</strong> (Exponent)</td><td>8 bit</td><td>Bit 30–23</td><td>Số mũ (có độ lệch bias = 127)</td></tr>
+          <tr><td><strong>F</strong> (Fraction)</td><td>23 bit</td><td>Bit 22–0</td><td>Định trị (phần thập phân sau dấu phẩy)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="key-box">
+        <span class="box-label">Công thức</span>
+        <strong>V = (−1)<sup>S</sup> × 2<sup>(E−127)</sup> × 1.F</strong>
+      </div>
+
+      <table>
+        <thead><tr><th>Giá trị đặc biệt</th><th>Điều kiện</th></tr></thead>
+        <tbody>
+          <tr><td><strong>±0</strong></td><td>E = 0, F = 0</td></tr>
+          <tr><td><strong>±Vô cùng (∞)</strong></td><td>E = 255, F = 0</td></tr>
+          <tr><td><strong>NaN</strong> (Not a Number)</td><td>E = 255, F ≠ 0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 08 CPU & Thanh ghi -->
+    <div class="content-section" id="cpu-thanh-ghi">
+      <h2>CPU — 8 thành phần cốt lõi</h2>
+      <p>CPU gồm nhiều thanh ghi (register) và hai đơn vị chức năng chính. Nhớ theo thứ tự xử lý:</p>
+      <div class="key-box">
+        <span class="box-label">Thứ tự hoạt động</span>
+        <strong>PC</strong> chỉ đường → <strong>IR</strong> nhận lệnh → <strong>CU</strong> giải mã → <strong>MAR/MBR</strong> lấy dữ liệu → <strong>ALU</strong> tính → <strong>ACC</strong> giữ kết quả
+      </div>
+
+      <div class="reg-grid">
+        <div class="reg-card">
+          <span class="reg-name">PC</span>
+          <div class="reg-desc"><strong>Program Counter</strong> — trỏ đến địa chỉ <em>lệnh tiếp theo</em> cần thực thi.</div>
+        </div>
+        <div class="reg-card">
+          <span class="reg-name">IR</span>
+          <div class="reg-desc"><strong>Instruction Register</strong> — giữ <em>lệnh đang được thực thi</em>.</div>
+        </div>
+        <div class="reg-card">
+          <span class="reg-name">MAR</span>
+          <div class="reg-desc"><strong>Memory Address Register</strong> — giữ <em>địa chỉ ô nhớ</em> cần đọc hoặc ghi.</div>
+        </div>
+        <div class="reg-card">
+          <span class="reg-name">MBR</span>
+          <div class="reg-desc"><strong>Memory Buffer Register</strong> — đệm dữ liệu khi đọc/ghi từ bộ nhớ.</div>
+        </div>
+        <div class="reg-card">
+          <span class="reg-name">ACC</span>
+          <div class="reg-desc"><strong>Accumulator</strong> — lưu <em>kết quả tính toán</em> của ALU.</div>
+        </div>
+        <div class="reg-card">
+          <span class="reg-name">PSW</span>
+          <div class="reg-desc"><strong>Program Status Word</strong> — cờ trạng thái: Z (zero), C (carry), S (sign).</div>
+        </div>
+        <div class="reg-card">
+          <span class="reg-name">CU</span>
+          <div class="reg-desc"><strong>Control Unit</strong> — giải mã lệnh, tạo tín hiệu điều khiển cho toàn bộ CPU.</div>
+        </div>
+        <div class="reg-card">
+          <span class="reg-name">ALU</span>
+          <div class="reg-desc"><strong>Arithmetic Logic Unit</strong> — thực hiện phép toán số học và logic.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 09 Bus -->
+    <div class="content-section" id="bus">
+      <h2>Bus hệ thống — 3 loại</h2>
+      <p>Bus là "đường cao tốc" nối CPU, bộ nhớ và thiết bị vào-ra. Có 3 loại bus với chức năng khác nhau:</p>
+
+      <div class="bus-card">
+        <span class="bus-label" style="background:rgba(47,196,178,0.12);color:#2fc4b2;">Địa chỉ</span>
+        <div>
+          <strong>Bus địa chỉ</strong> — truyền <em>địa chỉ</em> của ô nhớ hoặc thiết bị. <strong>Một chiều</strong>: CPU → Bộ nhớ.<br>
+          Độ rộng bus xác định dung lượng nhớ tối đa (32-bit bus → tối đa 4 GB RAM).
+        </div>
+      </div>
+      <div class="bus-card">
+        <span class="bus-label" style="background:rgba(240,165,0,0.12);color:#f0a500;">Dữ liệu</span>
+        <div>
+          <strong>Bus dữ liệu</strong> — truyền <em>dữ liệu và lệnh</em>. <strong>Hai chiều</strong>: CPU ↔ Bộ nhớ ↔ Thiết bị.<br>
+          Độ rộng bus = kích thước word của CPU.
+        </div>
+      </div>
+      <div class="bus-card">
+        <span class="bus-label" style="background:rgba(136,150,176,0.12);color:#8896b0;">Điều khiển</span>
+        <div>
+          <strong>Bus điều khiển</strong> — truyền <em>tín hiệu điều khiển</em>: đọc (RD), ghi (WR), xung nhịp (CLK), ngắt (INT)...<br>
+          <strong>Hai chiều</strong>.
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 Tập lệnh -->
+    <div class="content-section" id="tap-lenh">
+      <h2>Tập lệnh cơ bản</h2>
+
+      <table>
+        <thead><tr><th>Nhóm</th><th>Lệnh</th><th>Vi thao tác</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr>
+            <td rowspan="2"><strong>Chuyển dữ liệu</strong></td>
+            <td><code>LOAD X</code></td><td><code>ACC ← M[X]</code></td><td>Đọc giá trị tại ô nhớ X vào ACC</td>
+          </tr>
+          <tr>
+            <td><code>STORE X</code></td><td><code>M[X] ← ACC</code></td><td>Ghi ACC ra ô nhớ X</td>
+          </tr>
+          <tr>
+            <td rowspan="2"><strong>Số học</strong></td>
+            <td><code>ADD X</code></td><td><code>ACC ← ACC + M[X]</code></td><td>Cộng giá trị tại X vào ACC</td>
+          </tr>
+          <tr>
+            <td><code>SUB X</code></td><td><code>ACC ← ACC − M[X]</code></td><td>Trừ giá trị tại X khỏi ACC</td>
+          </tr>
+          <tr>
+            <td rowspan="4"><strong>Điều khiển</strong></td>
+            <td><code>JMP X</code></td><td><code>PC ← X</code></td><td>Nhảy vô điều kiện đến X</td>
+          </tr>
+          <tr>
+            <td><code>JZ X</code></td><td><code>Nếu Z=1: PC ← X</code></td><td>Nhảy nếu cờ Zero = 1</td>
+          </tr>
+          <tr>
+            <td><code>JC X</code></td><td><code>Nếu C=1: PC ← X</code></td><td>Nhảy nếu cờ Carry = 1</td>
+          </tr>
+          <tr>
+            <td><code>JS X</code></td><td><code>Nếu S=1: PC ← X</code></td><td>Nhảy nếu cờ Sign = 1 (số âm)</td>
+          </tr>
+          <tr>
+            <td><strong>Vào–Ra</strong></td>
+            <td><code>IN / OUT</code></td><td>—</td><td>Đọc / ghi thiết bị vào-ra</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 11 Chu kỳ lệnh -->
+    <div class="content-section" id="chu-ky-lenh">
+      <h2>Chu kỳ lệnh — 6 bước lặp mãi không dừng</h2>
+      <p>CPU thực hiện chu kỳ lệnh liên tục, từ khi bật nguồn đến khi tắt máy.</p>
+
+      <div class="step-flow">
+        <div class="step-item">
+          <div class="step-box" style="border-color:#2fc4b2;color:#2fc4b2;">1. Nhập lệnh<br><small style="color:#5c6880">Fetch</small></div>
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="step-item">
+          <div class="step-box" style="border-color:#2fc4b2;color:#2fc4b2;">2. Giải mã<br><small style="color:#5c6880">Decode</small></div>
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="step-item">
+          <div class="step-box">3. Tạo địa chỉ<br><small style="color:#5c6880">Address</small></div>
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="step-item">
+          <div class="step-box" style="border-color:#f0a500;color:#f0a500;">4. Nhập toán hạng<br><small style="color:#5c6880">Fetch Operand</small></div>
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="step-item">
+          <div class="step-box" style="border-color:#f0a500;color:#f0a500;">5. Thực thi<br><small style="color:#5c6880">Execute</small></div>
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="step-item">
+          <div class="step-box">6. Ghi kết quả<br><small style="color:#5c6880">Write Back</small></div>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Bước</th><th>Xảy ra khi nào?</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Bước 1–2</strong> (Fetch + Decode)</td><td>Luôn xảy ra với <strong>mọi lệnh</strong></td></tr>
+          <tr><td><strong>Bước 3–4</strong> (Address + Fetch Operand)</td><td>Chỉ khi cần <strong>lấy dữ liệu từ bộ nhớ</strong></td></tr>
+          <tr><td><strong>Bước 5–6</strong> (Execute + Write Back)</td><td>Luôn xảy ra — đây là <strong>mục đích của lệnh</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 12 Vi thao tác -->
+    <div class="content-section" id="vi-thao-tac">
+      <h2>Vi thao tác (Micro-operation)</h2>
+      <p>Mỗi bước trong chu kỳ lệnh được chia nhỏ thành <strong>vi thao tác</strong> — thao tác cơ bản nhất CPU có thể làm trong 1 xung nhịp đồng hồ.</p>
+
+      <h3>Chu kỳ nhập lệnh (luôn xảy ra)</h3>
+      <div class="code-block">
+<span class="ca">t1:</span> MAR <span class="cd">←</span> <span class="ct">PC</span>         <span class="cd">← PC chỉ địa chỉ lệnh cần lấy</span>
+<span class="ca">t2:</span> MBR <span class="cd">←</span> M[MAR]     <span class="cd">← đọc lệnh từ bộ nhớ vào MBR</span>
+    IR  <span class="cd">←</span> MBR[OP]    <span class="cd">← lưu mã lệnh (opcode) vào IR</span>
+    PC  <span class="cd">←</span> PC + 1     <span class="cd">← PC chỉ sang lệnh tiếp theo</span>
+      </div>
+
+      <h3>Thực hiện lệnh ADD X</h3>
+      <div class="code-block">
+<span class="ca">t3:</span> MAR <span class="cd">←</span> MBR[addr]   <span class="cd">← địa chỉ toán hạng X</span>
+<span class="ca">t4:</span> MBR <span class="cd">←</span> M[MAR]      <span class="cd">← đọc giá trị tại X</span>
+<span class="ca">t5:</span> ACC <span class="cd">←</span> ACC + MBR   <span class="cd">← ALU thực hiện phép cộng</span>
+      </div>
+
+      <h3>Thực hiện lệnh LOAD X</h3>
+      <div class="code-block">
+<span class="cd">─── Nhập lệnh (giống mọi lệnh) ───</span>
+C0: MAR ← PC
+C1: MBR ← M[MAR]
+C4: IR  ← MBR[op]
+C2: PC  ← PC + 1
+
+<span class="cd">─── Thực hiện ───</span>
+C5: MAR ← MBR[addr]   <span class="cd">← địa chỉ X</span>
+C1: MBR ← M[MAR]      <span class="cd">← giá trị tại X</span>
+C7: ACC ← MBR          <span class="cd">← nạp vào ACC</span>
+      </div>
+
+      <h3>Thực hiện lệnh STORE X</h3>
+      <div class="code-block">
+<span class="cd">─── Nhập lệnh (giống mọi lệnh) ───</span>
+C0: MAR ← PC
+C1: MBR ← M[MAR]
+C4: IR  ← MBR[op]
+C2: PC  ← PC + 1
+
+<span class="cd">─── Thực hiện ───</span>
+C5: MAR ← MBR[addr]   <span class="cd">← địa chỉ X</span>
+C6: MBR ← ACC          <span class="cd">← đưa ACC vào đệm</span>
+C8: M[MAR] ← MBR      <span class="cd">← ghi ra bộ nhớ</span>
+      </div>
+
+      <h3>Ví dụ đầy đủ: ADD 1000</h3>
+      <p>Trạng thái ban đầu: <strong>PC = 0100</strong>, <strong>ACC = 0101 (= 5)</strong>, ô nhớ 1000 chứa <strong>0111 (= 7)</strong>.</p>
+      <div class="code-block">
+<span class="cd">═══ NHẬP LỆNH ═══</span>
+<span class="ca">t1:</span> MAR ← PC            → MAR = <span class="ct">0100</span>
+<span class="ca">t2:</span> MBR ← M[<span class="ct">0100</span>]       → MBR = <span class="ct">00111000</span>
+    IR  ← MBR[OP]       → IR  = <span class="ca">0011</span> (ADD)
+    PC  ← PC+1          → PC  = <span class="ct">0101</span>
+
+<span class="cd">═══ THỰC HIỆN ═══</span>
+<span class="ca">t3:</span> MAR ← MBR[addr]     → MAR = <span class="ct">1000</span>
+<span class="ca">t4:</span> MBR ← M[<span class="ct">1000</span>]       → MBR = <span class="ct">0111</span> (=7)
+<span class="ca">t5:</span> ACC ← ACC + MBR     → ACC = <span class="ct">0101</span>+<span class="ct">0111</span>
+                           = <span class="cg">1100</span> (=12) ✓
+      </div>
+
+      <table>
+        <thead><tr><th>Tín hiệu</th><th>Vi thao tác</th></tr></thead>
+        <tbody>
+          <tr><td><strong>C0</strong></td><td><code>MAR ← PC</code></td></tr>
+          <tr><td><strong>C1</strong></td><td><code>MBR ← M[MAR]</code></td></tr>
+          <tr><td><strong>C2</strong></td><td><code>PC ← PC + 1</code></td></tr>
+          <tr><td><strong>C4</strong></td><td><code>IR ← MBR[op]</code></td></tr>
+          <tr><td><strong>C5</strong></td><td><code>MAR ← MBR[addr]</code></td></tr>
+          <tr><td><strong>C6</strong></td><td><code>MBR ← ACC</code></td></tr>
+          <tr><td><strong>C7</strong></td><td><code>ACC ← MBR</code></td></tr>
+          <tr><td><strong>C8</strong></td><td><code>M[MAR] ← MBR</code></td></tr>
+          <tr><td><strong>C9</strong></td><td><code>ACC ← ACC + MBR</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 13 Ôn thi -->
+    <div class="content-section" id="on-thi">
+      <h2>Checklist ôn thi — Bài 1</h2>
+
+      <h3>Lịch sử & Von Neumann</h3>
+      <ul>
+        <li>☐ 4 thế hệ máy tính và công nghệ đặc trưng của từng thế hệ</li>
+        <li>☐ Mốc thi: ENIAC 1943 · Von Neumann / EDVAC 1945 · Intel 4004 1971 · IBM PC 1981</li>
+        <li>☐ 3 nguyên lý Von Neumann (lưu trữ chung · tuần tự · bus)</li>
+        <li>☐ 3 thành phần chính + Bus hệ thống</li>
+      </ul>
+
+      <h3>Hệ nhị phân</h3>
+      <ul>
+        <li>☐ Chuyển thập phân → nhị phân (phần nguyên): chia cho 2, đọc từ dưới lên</li>
+        <li>☐ Chuyển thập phân → nhị phân (phần thập phân): nhân với 2, đọc từ trên xuống</li>
+        <li>☐ Tính bù 2: đảo bit rồi cộng 1. Kiểm tra bằng phép cộng (tổng = 0)</li>
+        <li>☐ Cấu trúc IEEE 754: S (1 bit) · E (8 bit) · F (23 bit) và công thức V = (−1)ˢ × 2^(E−127) × 1.F</li>
+      </ul>
+
+      <h3>CPU & Chu kỳ lệnh</h3>
+      <ul>
+        <li>☐ Chức năng 8 thành phần CPU: PC, IR, MAR, MBR, ACC, PSW, CU, ALU</li>
+        <li>☐ 6 bước chu kỳ lệnh theo thứ tự đúng</li>
+        <li>☐ Vi thao tác chu kỳ nhập lệnh (t1, t2): MAR←PC, MBR←M[MAR], IR←MBR[op], PC←PC+1</li>
+        <li>☐ Vi thao tác ADD X, LOAD X, STORE X — đặc biệt phần thực hiện</li>
+      </ul>
+
+      <div class="tip-box">
+        <span class="box-label">Mẹo ôn thi</span>
+        Phần nhập lệnh (t1–t2) <strong>giống nhau cho mọi lệnh</strong>. Chỉ cần nhớ thêm phần thực hiện riêng của từng lệnh: ADD cộng vào ACC, LOAD nạp vào ACC, STORE ghi ra bộ nhớ.
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

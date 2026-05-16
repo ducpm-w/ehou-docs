@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT02 – Bài 1: Kiến trúc cơ bản</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN TOKENS ── */
+:root {
+  --bg:      #13151F;
+  --surface: #1C2030;
+  --border:  #262C42;
+  --text:    #E4E8F2;
+  --muted:   #5C6880;
+  --dim:     #8896B0;
+  --teal:    #2FC4B2;
+  --amber:   #F0A500;
+  --font:    'Be Vietnam Pro', sans-serif;
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #0A0C13; }
+
+body {
+  font-family: var(--font);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── DECK WRAPPER ── */
+.deck {
+  position: relative;
+  width: min(960px, 100vw);
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+
+/* ── SLIDE ── */
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  padding: 48px 60px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.slide.active { opacity: 1; pointer-events: all; }
+
+/* ── TYPOGRAPHY ── */
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 10px;
+}
+h1 {
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+h2 {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 28px;
+}
+h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+p, li {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--dim);
+}
+strong { color: var(--text); font-weight: 600; }
+em { color: var(--teal); font-style: normal; font-weight: 500; }
+
+/* ── LAYOUT HELPERS ── */
+.row { display: flex; gap: 20px; align-items: stretch; flex: 1; }
+.col { display: flex; flex-direction: column; flex: 1; }
+.center { align-items: center; justify-content: center; }
+.gap-sm { gap: 12px; }
+.gap-md { gap: 20px; }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+.card.accent-teal { border-left: 3px solid var(--teal); }
+.card.accent-amber { border-left: 3px solid var(--amber); }
+
+/* ── BADGE ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.badge-teal { background: rgba(47,196,178,0.12); color: var(--teal); }
+.badge-amber { background: rgba(240,165,0,0.12); color: var(--amber); }
+
+/* ── CODE BLOCK ── */
+.code {
+  background: #0D0F17;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 22px;
+  font-family: 'Be Vietnam Pro', monospace;
+  font-size: 16px;
+  line-height: 2;
+}
+.code .c-teal { color: var(--teal); }
+.code .c-amber { color: var(--amber); }
+.code .c-dim   { color: var(--muted); }
+.code .c-green { color: #4ADE80; }
+
+/* ── DIVIDER ── */
+hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+/* ── NAV BAR ── */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(960px, 100vw);
+  padding: 10px 16px;
+}
+.nav-counter {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+.nav-btns { display: flex; gap: 8px; }
+.nav-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--dim);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 18px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background 0.15s, color 0.15s;
+}
+.nav-btn:hover { background: var(--border); color: var(--text); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* ── PROGRESS ── */
+.progress-track {
+  width: min(960px, 100vw);
+  height: 2px;
+  background: var(--border);
+}
+.progress-fill {
+  height: 100%;
+  background: var(--teal);
+  transition: width 0.3s ease;
+}
+
+/* ── TITLE SLIDE ── */
+.slide-title {
+  justify-content: center;
+  align-items: flex-start;
+}
+.title-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.title-chip span { color: var(--teal); font-weight: 600; }
+
+/* ── TIMELINE ── */
+.timeline { display: flex; flex-direction: column; gap: 16px; flex: 1; }
+.tl-item { display: flex; gap: 16px; align-items: flex-start; }
+.tl-dot-col { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.tl-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--teal); flex-shrink: 0; margin-top: 6px;
+}
+.tl-line { width: 1px; flex: 1; background: var(--border); margin-top: 4px; min-height: 20px; }
+.tl-year { font-size: 12px; font-weight: 600; color: var(--teal); letter-spacing: 0.06em; margin-bottom: 2px; }
+.tl-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.tl-desc { font-size: 15px; color: var(--dim); line-height: 1.5; }
+
+/* ── STEP VISUAL ── */
+.steps { display: flex; flex-direction: column; gap: 10px; }
+.step-row { display: flex; align-items: center; gap: 14px; }
+.step-num {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--teal); color: #0D1117;
+  font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.step-num.amber { background: var(--amber); }
+.step-body { font-size: 17px; color: var(--dim); line-height: 1.5; }
+
+/* ── BIT VISUAL ── */
+.bit-box {
+  width: 52px; height: 52px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 800; flex-shrink: 0;
+}
+.bit-1 { background: var(--teal); color: #0D1117; }
+.bit-0 { background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
+
+/* ── MINI TAG ── */
+.tag {
+  font-size: 12px; font-weight: 600;
+  padding: 3px 8px; border-radius: 4px;
+  display: inline-block;
+}
+.tag-teal { background: rgba(47,196,178,0.1); color: var(--teal); }
+.tag-amber { background: rgba(240,165,0,0.1); color: var(--amber); }
+
+/* ── SLIDE NUMBER WATERMARK ── */
+.slide-num-mark {
+  position: absolute;
+  bottom: 20px;
+  right: 28px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--border);
+  letter-spacing: 0.1em;
+}
+</style>
+</head>
+<body>
+
+<div class="progress-track">
+  <div class="progress-fill" id="prog"></div>
+</div>
+
+<div class="deck" id="deck">
+
+<!-- ═══ SLIDE 1: TITLE ═══ -->
+<div class="slide slide-title active" id="s1">
+  <div class="title-chip">
+    <span>IT02</span> · Đại học Mở Hà Nội
+  </div>
+  <div class="label">Bài 1</div>
+  <h1>Kiến Trúc Cơ Bản<br>&amp; Nguyên Lý Hoạt Động</h1>
+  <p style="margin-top:20px;max-width:480px;font-size:19px;">Máy tính điện tử hoạt động như thế nào từ bên trong — từ bit đến CPU, từ lịch sử đến kiến trúc Von Neumann.</p>
+  <div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;">
+    <span class="tag tag-teal">Lịch sử máy tính</span>
+    <span class="tag tag-teal">Hệ nhị phân</span>
+    <span class="tag tag-teal">Kiến trúc Von Neumann</span>
+    <span class="tag tag-amber">CPU &amp; Thanh ghi</span>
+    <span class="tag tag-amber">Chu kỳ lệnh</span>
+    <span class="tag tag-amber">Vi thao tác</span>
+  </div>
+
+  <!-- SVG chip icon -->
+  <svg style="position:absolute;right:60px;top:50%;transform:translateY(-50%);opacity:0.15;" width="200" height="200" viewBox="0 0 200 200">
+    <rect x="60" y="60" width="80" height="80" rx="8" fill="none" stroke="#2FC4B2" stroke-width="3"/>
+    <rect x="72" y="72" width="56" height="56" rx="4" fill="none" stroke="#2FC4B2" stroke-width="1.5"/>
+    <line x1="80" y1="60" x2="80" y2="40" stroke="#2FC4B2" stroke-width="2"/>
+    <line x1="100" y1="60" x2="100" y2="40" stroke="#2FC4B2" stroke-width="2"/>
+    <line x1="120" y1="60" x2="120" y2="40" stroke="#2FC4B2" stroke-width="2"/>
+    <line x1="80" y1="140" x2="80" y2="160" stroke="#2FC4B2" stroke-width="2"/>
+    <line x1="100" y1="140" x2="100" y2="160" stroke="#2FC4B2" stroke-width="2"/>
+    <line x1="120" y1="140" x2="120" y2="160" stroke="#2FC4B2" stroke-width="2"/>
+    <line x1="60" y1="80" x2="40" y2="80" stroke="#F0A500" stroke-width="2"/>
+    <line x1="60" y1="100" x2="40" y2="100" stroke="#F0A500" stroke-width="2"/>
+    <line x1="60" y1="120" x2="40" y2="120" stroke="#F0A500" stroke-width="2"/>
+    <line x1="140" y1="80" x2="160" y2="80" stroke="#F0A500" stroke-width="2"/>
+    <line x1="140" y1="100" x2="160" y2="100" stroke="#F0A500" stroke-width="2"/>
+    <line x1="140" y1="120" x2="160" y2="120" stroke="#F0A500" stroke-width="2"/>
+    <text x="100" y="106" text-anchor="middle" fill="#2FC4B2" font-size="13" font-family="Be Vietnam Pro" font-weight="700">CPU</text>
+  </svg>
+  <div class="slide-num-mark">01 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 2: MỤC TIÊU ═══ -->
+<div class="slide" id="s2">
+  <div class="label">Bài 1 · Giới thiệu</div>
+  <h2>Mục tiêu bài học</h2>
+  <div class="row gap-md" style="flex:1;">
+    <div class="card accent-teal col">
+      <div style="font-size:28px;margin-bottom:10px;">📖</div>
+      <h3>Lịch sử</h3>
+      <p>Nắm được sự tiến hóa của máy tính qua 4 thế hệ, từ cơ khí đến VLSI.</p>
+    </div>
+    <div class="card accent-teal col">
+      <div style="font-size:28px;margin-bottom:10px;">🔢</div>
+      <h3>Hệ nhị phân</h3>
+      <p>Hiểu cách biểu diễn số, chữ và dữ liệu bằng 0 và 1.</p>
+    </div>
+    <div class="card accent-amber col">
+      <div style="font-size:28px;margin-bottom:10px;">🏗️</div>
+      <h3>Kiến trúc máy tính</h3>
+      <p>Nắm kiến trúc Von Neumann — nền tảng mọi máy tính hiện đại.</p>
+    </div>
+    <div class="card accent-amber col">
+      <div style="font-size:28px;margin-bottom:10px;">⚙️</div>
+      <h3>Hoạt động CPU</h3>
+      <p>Hiểu chu kỳ lệnh và cách CPU xử lý từng lệnh từng bước.</p>
+    </div>
+  </div>
+  <div class="slide-num-mark">02 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 3: LỊCH SỬ CƠ KHÍ ═══ -->
+<div class="slide" id="s3">
+  <div class="label">Phần 1 · Lịch sử</div>
+  <h2>Máy tính cơ khí — trước điện tử</h2>
+  <div class="row" style="flex:1;gap:40px;">
+    <div class="col" style="flex:1.1;">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-year">Thế kỷ 17</div>
+            <div class="tl-title">Blaise Pascal — Máy tính cơ khí đầu tiên</div>
+            <div class="tl-desc">Chỉ làm được cộng và trừ. Nặng nề, chậm, hay hỏng.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-year">Thế kỷ 19</div>
+            <div class="tl-title">Babbage — Difference Engine</div>
+            <div class="tl-desc">Tự động hóa nhiều bước tính toán, không cần can thiệp tay giữa chừng.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot-col"><div class="tl-dot" style="background:var(--amber)"></div></div>
+          <div>
+            <div class="tl-year" style="color:var(--amber)">Thế kỷ 19 · Chưa hoàn thành</div>
+            <div class="tl-title">Babbage — Analytical Engine</div>
+            <div class="tl-desc">Ý tưởng máy tính đa năng, điều khiển bằng chương trình — thiếu tài chính, không hoàn thành.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col center" style="flex:0.9;">
+      <div class="card" style="width:100%;padding:24px;">
+        <div class="badge badge-amber">⚠️ Hạn chế</div>
+        <div class="steps" style="margin-top:8px;">
+          <div class="step-row"><div class="step-num amber" style="font-size:18px;">✕</div><div class="step-body"><strong>Chậm</strong> — hoàn toàn cơ khí, bánh răng</div></div>
+          <div class="step-row"><div class="step-num amber" style="font-size:18px;">✕</div><div class="step-body"><strong>Cồng kềnh</strong> — chiếm cả căn phòng</div></div>
+          <div class="step-row"><div class="step-num amber" style="font-size:18px;">✕</div><div class="step-body"><strong>Giá cao</strong> — rất tốn kém sản xuất</div></div>
+          <div class="step-row"><div class="step-num amber" style="font-size:18px;">✕</div><div class="step-body"><strong>Hay hỏng</strong> — bộ phận cơ khí mài mòn</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num-mark">03 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 4: LỊCH SỬ ĐIỆN TỬ ═══ -->
+<div class="slide" id="s4">
+  <div class="label">Phần 1 · Lịch sử</div>
+  <h2>4 thế hệ máy tính điện tử</h2>
+  <div class="row gap-md" style="flex:1;">
+    <div class="card col">
+      <div class="badge badge-teal">Thế hệ 1 · 1943–</div>
+      <h3>Đèn điện tử chân không</h3>
+      <p><strong>ENIAC</strong> (1943) — máy điện tử đầu tiên<br><strong>EDVAC</strong> (1945) — Von Neumann đề xuất kiến trúc mới<br><strong>IAS</strong> (1947) — chuẩn hóa kiến trúc</p>
+    </div>
+    <div class="card col">
+      <div class="badge badge-teal">Thế hệ 2 · 1950s–</div>
+      <h3>Bóng bán dẫn (Transistor)</h3>
+      <p>Thêm lệnh gọi chương trình con (CALL)<br>Ngôn ngữ lập trình bậc cao xuất hiện<br>Hệ điều hành batch monitor</p>
+    </div>
+    <div class="card col">
+      <div class="badge badge-amber">Thế hệ 3 · 1960s–</div>
+      <h3>Vi mạch tích hợp (IC)</h3>
+      <p><strong>IBM System/360</strong> — tập lệnh chung cho cả dòng sản phẩm<br>Hệ điều hành OS/360 — đa nhiệm thực sự</p>
+    </div>
+    <div class="card col" style="border-color:var(--teal);">
+      <div class="badge badge-amber">Thế hệ 4 · 1971–</div>
+      <h3>Mạch tích hợp mật độ rất cao (VLSI)</h3>
+      <p><strong>Intel 4004</strong> (1971) — CPU chip đầu tiên, 4-bit<br><strong>Intel 8008/8086</strong> — nền tảng x86<br><strong>IBM PC</strong> (1981) — máy tính cá nhân phổ biến</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+    <span style="font-size:16px;">💡</span>
+    <p style="font-size:15px;margin:0;">Mốc thi: <strong style="color:var(--teal)">ENIAC (1943)</strong> → <strong style="color:var(--teal)">Von Neumann / EDVAC (1945)</strong> → <strong style="color:var(--amber)">Intel 4004 (1971)</strong> → <strong style="color:var(--amber)">IBM PC (1981)</strong></p>
+  </div>
+  <div class="slide-num-mark">04 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 5: VON NEUMANN ═══ -->
+<div class="slide" id="s5">
+  <div class="label">Phần 2 · Kiến trúc</div>
+  <h2>Kiến trúc Von Neumann</h2>
+  <p style="margin-bottom:24px;font-size:17px;">Đề xuất năm 1945, mọi máy tính từ đó đến nay đều dựa trên thiết kế này.</p>
+  <!-- Diagram -->
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+    <svg width="760" height="200" viewBox="0 0 760 200">
+      <!-- CPU -->
+      <rect x="20" y="60" width="180" height="80" rx="10" fill="#1C2030" stroke="#2FC4B2" stroke-width="1.5"/>
+      <text x="110" y="88" text-anchor="middle" fill="#2FC4B2" font-family="Be Vietnam Pro" font-weight="700" font-size="15">CPU</text>
+      <text x="110" y="108" text-anchor="middle" fill="#8896B0" font-family="Be Vietnam Pro" font-size="12">Xử lý · Tính toán</text>
+      <text x="110" y="124" text-anchor="middle" fill="#8896B0" font-family="Be Vietnam Pro" font-size="12">Điều phối hệ thống</text>
+      <!-- Arrow CPU→BUS -->
+      <line x1="200" y1="100" x2="270" y2="100" stroke="#2FC4B2" stroke-width="1.5"/>
+      <polygon points="268,95 278,100 268,105" fill="#2FC4B2"/>
+      <line x1="270" y1="100" x2="200" y2="100" stroke="#2FC4B2" stroke-width="1.5"/>
+      <polygon points="202,95 192,100 202,105" fill="#2FC4B2"/>
+      <!-- BUS -->
+      <rect x="278" y="86" width="204" height="28" rx="6" fill="#0D0F17" stroke="#262C42" stroke-width="1"/>
+      <text x="380" y="103" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-weight="600" font-size="12">BUS HỆ THỐNG</text>
+      <!-- Arrow BUS→Memory -->
+      <line x1="482" y1="100" x2="550" y2="100" stroke="#F0A500" stroke-width="1.5"/>
+      <polygon points="548,95 558,100 548,105" fill="#F0A500"/>
+      <line x1="550" y1="100" x2="482" y2="100" stroke="#F0A500" stroke-width="1.5"/>
+      <polygon points="484,95 474,100 484,105" fill="#F0A500"/>
+      <!-- Memory -->
+      <rect x="558" y="40" width="180" height="120" rx="10" fill="#1C2030" stroke="#F0A500" stroke-width="1.5"/>
+      <text x="648" y="82" text-anchor="middle" fill="#F0A500" font-family="Be Vietnam Pro" font-weight="700" font-size="14">Bộ nhớ chính</text>
+      <line x1="578" y1="92" x2="718" y2="92" stroke="#262C42" stroke-width="1"/>
+      <text x="648" y="110" text-anchor="middle" fill="#8896B0" font-family="Be Vietnam Pro" font-size="12">Chương trình</text>
+      <text x="648" y="126" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">+</text>
+      <text x="648" y="142" text-anchor="middle" fill="#8896B0" font-family="Be Vietnam Pro" font-size="12">Dữ liệu</text>
+      <text x="648" y="155" text-anchor="middle" fill="#2FC4B2" font-family="Be Vietnam Pro" font-size="10" font-style="italic">cùng 1 bộ nhớ!</text>
+      <!-- I/O below bus -->
+      <line x1="380" y1="114" x2="380" y2="148" stroke="#8896B0" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <rect x="290" y="148" width="180" height="40" rx="8" fill="#1C2030" stroke="#262C42" stroke-width="1"/>
+      <text x="380" y="165" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-weight="600" font-size="12">THIẾT BỊ VÀO–RA</text>
+      <text x="380" y="180" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">Bàn phím · Màn hình · Ổ cứng...</text>
+    </svg>
+  </div>
+  <div class="slide-num-mark">05 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 6: 3 NGUYÊN LÝ ═══ -->
+<div class="slide" id="s6">
+  <div class="label">Phần 2 · Kiến trúc</div>
+  <h2>3 nguyên lý Von Neumann</h2>
+  <div class="col" style="flex:1;gap:18px;">
+    <div class="card" style="display:flex;gap:20px;align-items:center;padding:22px 28px;">
+      <div style="width:48px;height:48px;background:var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#0D1117;flex-shrink:0;">1</div>
+      <div>
+        <h3 style="margin-bottom:4px;">Lưu trữ chung</h3>
+        <p>Chương trình và dữ liệu <strong>cùng lưu trong một bộ nhớ</strong> duy nhất, đều dưới dạng số nhị phân (0 và 1).</p>
+      </div>
+    </div>
+    <div class="card" style="display:flex;gap:20px;align-items:center;padding:22px 28px;">
+      <div style="width:48px;height:48px;background:var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#0D1117;flex-shrink:0;">2</div>
+      <div>
+        <h3 style="margin-bottom:4px;">Thực thi tuần tự</h3>
+        <p>CPU đọc <strong>từng lệnh một</strong> theo thứ tự từ bộ nhớ, giải mã và thực thi — lặp đi lặp lại liên tục.</p>
+      </div>
+    </div>
+    <div class="card" style="display:flex;gap:20px;align-items:center;padding:22px 28px;">
+      <div style="width:48px;height:48px;background:var(--amber);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#0D1117;flex-shrink:0;">3</div>
+      <div>
+        <h3 style="margin-bottom:4px;">Bus kết nối</h3>
+        <p><strong>Bus hệ thống</strong> là "đường cao tốc" nối CPU, bộ nhớ và thiết bị vào-ra — tất cả giao tiếp qua đây.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num-mark">06 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 7: BIT LÀ GÌ ═══ -->
+<div class="slide" id="s7">
+  <div class="label">Phần 3 · Hệ nhị phân</div>
+  <h2>Bit — đơn vị nhỏ nhất của thông tin</h2>
+  <div class="row" style="flex:1;gap:40px;">
+    <div class="col" style="flex:1.2;gap:18px;">
+      <p style="font-size:19px;">Máy tính chỉ có 2 trạng thái điện: <strong>có điện (1)</strong> và <strong>không có điện (0)</strong>. Mọi thứ — số, chữ, hình ảnh, video — đều phải quy về chuỗi 0 và 1.</p>
+      <hr>
+      <div class="steps">
+        <div class="step-row">
+          <div class="step-num" style="background:var(--surface);border:1.5px solid var(--teal);color:var(--teal);">💡</div>
+          <div class="step-body"><strong>1 bit</strong> = 1 bóng đèn: tắt (0) hoặc sáng (1)</div>
+        </div>
+        <div class="step-row">
+          <div class="step-num" style="background:var(--surface);border:1.5px solid var(--amber);color:var(--amber);">8</div>
+          <div class="step-body"><strong>8 bit = 1 byte</strong> — đơn vị cơ bản thường dùng</div>
+        </div>
+        <div class="step-row">
+          <div class="step-num" style="background:var(--surface);border:1.5px solid var(--teal);color:var(--teal);">W</div>
+          <div class="step-body"><strong>Word</strong> = số bit CPU xử lý 1 lần (16 / 32 / 64 bit)</div>
+        </div>
+      </div>
+    </div>
+    <div class="col center" style="flex:0.8;gap:16px;">
+      <p style="font-size:14px;color:var(--muted);text-align:center;letter-spacing:0.06em;text-transform:uppercase;">Ví dụ: số 5 viết bằng 8 bit</p>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <div class="bit-box bit-0">0</div>
+        <div class="bit-box bit-0">0</div>
+        <div class="bit-box bit-0">0</div>
+        <div class="bit-box bit-0">0</div>
+        <div class="bit-box bit-0">0</div>
+        <div class="bit-box bit-1">1</div>
+        <div class="bit-box bit-0">0</div>
+        <div class="bit-box bit-1">1</div>
+      </div>
+      <p style="font-size:14px;color:var(--muted);text-align:center;">Bit màu xanh = 1 (có giá trị)<br>Bit xám = 0 (không có giá trị)</p>
+      <div class="card" style="padding:12px 18px;text-align:center;margin-top:4px;">
+        <p style="font-size:15px;margin:0;"><strong>4 + 0 + 1 = 5</strong> ✓</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num-mark">07 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 8: CHUYỂN ĐỔI PHẦN NGUYÊN ═══ -->
+<div class="slide" id="s8">
+  <div class="label">Phần 3 · Hệ nhị phân</div>
+  <h2>Chuyển thập phân → nhị phân (phần nguyên)</h2>
+  <div class="row" style="flex:1;gap:32px;">
+    <div class="col" style="flex:1;">
+      <div class="badge badge-teal">Quy tắc</div>
+      <p style="font-size:18px;margin-bottom:16px;"><strong>Chia liên tiếp cho 2</strong>, ghi phần dư. Đọc phần dư <strong>từ dưới lên</strong>.</p>
+      <div class="code">
+<span class="c-dim">Ví dụ: 19₁₀ → nhị phân</span>
+
+<span class="c-teal">19</span> ÷ 2 = <span class="c-dim">9</span>  dư <span class="c-amber">1</span>  ← đọc sau
+<span class="c-teal"> 9</span> ÷ 2 = <span class="c-dim">4</span>  dư <span class="c-amber">1</span>
+<span class="c-teal"> 4</span> ÷ 2 = <span class="c-dim">2</span>  dư <span class="c-amber">0</span>
+<span class="c-teal"> 2</span> ÷ 2 = <span class="c-dim">1</span>  dư <span class="c-amber">0</span>
+<span class="c-teal"> 1</span> ÷ 2 = <span class="c-dim">0</span>  dư <span class="c-amber">1</span>  ← đọc trước
+
+→ 19₁₀ = <span class="c-green">10011</span>₂
+      </div>
+    </div>
+    <div class="col" style="flex:0.9;">
+      <div class="badge badge-amber">Tại sao lại đọc từ dưới lên?</div>
+      <div class="card" style="flex:1;margin-top:0;">
+        <p style="font-size:17px;">Phần dư đầu tiên là bit <strong>thấp nhất</strong> (giá trị nhỏ nhất). Phần dư cuối cùng là bit <strong>cao nhất</strong> (giá trị lớn nhất).</p>
+        <hr>
+        <p style="font-size:16px;">Kiểm tra lại:<br>
+        <strong style="color:var(--teal);">10011</strong>₂ = 1×16 + 0×8 + 0×4 + 1×2 + 1×1<br>
+        = 16 + 0 + 0 + 2 + 1 = <strong style="color:var(--green);">19 ✓</strong></p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num-mark">08 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 9: CHUYỂN ĐỔI PHẦN THẬP PHÂN ═══ -->
+<div class="slide" id="s9">
+  <div class="label">Phần 3 · Hệ nhị phân</div>
+  <h2>Chuyển thập phân → nhị phân (phần thập phân)</h2>
+  <div class="row" style="flex:1;gap:32px;">
+    <div class="col" style="flex:1;">
+      <div class="badge badge-teal">Quy tắc</div>
+      <p style="font-size:18px;margin-bottom:16px;"><strong>Nhân liên tiếp với 2</strong>, lấy phần nguyên. Đọc <strong>từ trên xuống</strong>.</p>
+      <div class="code">
+<span class="c-dim">Ví dụ: 0.625₁₀ → nhị phân</span>
+
+0.625 × 2 = <span class="c-amber">1</span>.25  → lấy <span class="c-amber">1</span>, dư 0.25
+0.25  × 2 = <span class="c-dim">0</span>.50  → lấy <span class="c-dim">0</span>, dư 0.50
+0.50  × 2 = <span class="c-amber">1</span>.00  → lấy <span class="c-amber">1</span>, dư <span class="c-green">0.00 ← DỪNG</span>
+
+→ 0.625₁₀ = <span class="c-green">0.101</span>₂
+      </div>
+    </div>
+    <div class="col" style="flex:0.9;gap:14px;">
+      <div class="card accent-teal">
+        <div class="badge badge-teal">Khi nào dừng?</div>
+        <div class="steps" style="margin-top:4px;">
+          <div class="step-row"><div class="step-num" style="font-size:13px;background:var(--teal);color:#0D1117;">✓</div><div class="step-body"><strong>Phần dư = 0</strong> — kết quả chính xác</div></div>
+          <div class="step-row"><div class="step-num amber" style="font-size:13px;">∞</div><div class="step-body"><strong>Phần dư lặp lại</strong> — số vô hạn tuần hoàn</div></div>
+          <div class="step-row"><div class="step-num" style="font-size:10px;background:var(--muted);color:#0D1117;">n</div><div class="step-body"><strong>Đủ n bit</strong> yêu cầu — làm tròn và dừng</div></div>
+        </div>
+      </div>
+      <div class="card accent-amber">
+        <p style="font-size:15px;margin:0;">⚠️ Số như <strong>0.1, 0.107, 0.3</strong> không có biểu diễn nhị phân hữu hạn — đó là lý do <code style="color:var(--teal)">0.1 + 0.2 ≠ 0.3</code> trong máy tính!</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num-mark">09 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 10: SỐ ÂM — TẠI SAO CẦN BÙ 2 ═══ -->
+<div class="slide" id="s10">
+  <div class="label">Phần 3 · Hệ nhị phân</div>
+  <h2>Số âm — Tại sao cần bù 2?</h2>
+  <div class="row" style="flex:1;gap:32px;">
+    <div class="col" style="flex:1;gap:16px;">
+      <div class="card accent-teal">
+        <h3>Vấn đề</h3>
+        <p>ALU bên trong CPU <strong>chỉ có mạch cộng</strong>. Khi tính <code style="color:var(--teal)">5 − 3</code>, máy tính phải thực hiện <code style="color:var(--teal)">5 + (−3)</code>. Vậy biểu diễn <strong>−3</strong> bằng 0 và 1 thế nào?</p>
+      </div>
+      <div class="card accent-amber">
+        <h3>Giải pháp: Bù 2</h3>
+        <p>Trong hệ 4-bit (0–15), <strong>−3</strong> và <strong>+13</strong> có tác dụng <em>giống hệt nhau</em> khi cộng — giống kim đồng hồ quay thuận 13 bước hay ngược 3 bước đều đến cùng một chỗ.</p>
+      </div>
+    </div>
+    <div class="col center" style="flex:0.9;">
+      <!-- Clock analogy SVG -->
+      <svg width="200" height="200" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="85" fill="#1C2030" stroke="#262C42" stroke-width="1.5"/>
+        <text x="100" y="28" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="13">0</text>
+        <text x="172" y="104" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="13">4</text>
+        <text x="100" y="182" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="13">8</text>
+        <text x="28" y="104" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="13">12</text>
+        <!-- Position 5 -->
+        <circle cx="127" cy="36" r="8" fill="#2FC4B2"/>
+        <text x="127" y="40" text-anchor="middle" fill="#0D1117" font-family="Be Vietnam Pro" font-size="11" font-weight="700">5</text>
+        <!-- Position 2 -->
+        <circle cx="162" cy="153" r="8" fill="#F0A500"/>
+        <text x="162" y="157" text-anchor="middle" fill="#0D1117" font-family="Be Vietnam Pro" font-size="11" font-weight="700">2</text>
+        <!-- Arrow: -3 steps (counter-clockwise) -->
+        <path d="M 120 44 A 75 75 0 0 0 157 146" fill="none" stroke="#2FC4B2" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="68" y="90" fill="#2FC4B2" font-family="Be Vietnam Pro" font-size="12" font-weight="600">−3</text>
+        <!-- Arrow: +13 steps (clockwise) -->
+        <path d="M 134 39 A 75 75 0 1 1 154 142" fill="none" stroke="#F0A500" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="120" y="145" fill="#F0A500" font-family="Be Vietnam Pro" font-size="12" font-weight="600">+13</text>
+        <text x="100" y="112" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">Cùng kết quả!</text>
+      </svg>
+      <p style="font-size:14px;color:var(--muted);text-align:center;margin-top:4px;">Trong 4-bit: −3 ≡ +13<br>Máy tính lợi dụng điều này!</p>
+    </div>
+  </div>
+  <div class="slide-num-mark">10 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 11: BÙ 2 — CÁCH TÍNH ═══ -->
+<div class="slide" id="s11">
+  <div class="label">Phần 3 · Hệ nhị phân</div>
+  <h2>Bù 2 — Cách tính từng bước</h2>
+  <div class="row" style="flex:1;gap:32px;">
+    <div class="col" style="flex:1.1;gap:14px;">
+      <div class="badge badge-teal">Ví dụ: tính −5 trong 8 bit</div>
+      <div class="steps">
+        <div class="step-row" style="align-items:flex-start;">
+          <div class="step-num">0</div>
+          <div>
+            <div class="step-body"><strong>Viết +5 ra nhị phân (8 bit)</strong></div>
+            <div class="code" style="margin-top:6px;padding:10px 16px;line-height:1.8;">+5 = <span class="c-teal">0 0 0 0 0 1 0 1</span></div>
+          </div>
+        </div>
+        <div class="step-row" style="align-items:flex-start;">
+          <div class="step-num">1</div>
+          <div>
+            <div class="step-body"><strong>Đảo tất cả bit</strong> (bù 1)</div>
+            <div class="code" style="margin-top:6px;padding:10px 16px;line-height:1.8;"><span class="c-dim">Bù1</span> = <span class="c-amber">1 1 1 1 1 0 1 0</span></div>
+          </div>
+        </div>
+        <div class="step-row" style="align-items:flex-start;">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-body"><strong>Cộng thêm 1</strong></div>
+            <div class="code" style="margin-top:6px;padding:10px 16px;line-height:1.8;"><span class="c-amber">1 1 1 1 1 0 1 0</span>
+<span class="c-dim">+               1</span>
+──────────────────
+<span class="c-green">1 1 1 1 1 0 1 1</span>  ← <span class="c-dim">đây là −5</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col" style="flex:0.9;gap:14px;">
+      <div class="card accent-teal">
+        <div class="badge badge-teal">Kiểm tra: (+5) + (−5) = ?</div>
+        <div class="code" style="margin-top:8px;padding:12px 16px;font-size:15px;line-height:1.9;">  <span class="c-teal">0 0 0 0 0 1 0 1</span>  (+5)
++ <span class="c-green">1 1 1 1 1 0 1 1</span>  (−5)
+─────────────────
+<span class="c-amber">1</span> <span class="c-teal">0 0 0 0 0 0 0 0</span>
+<span class="c-dim">↑ bit thứ 9 rớt ra</span>
+
+→ còn lại: <span class="c-green">00000000 = 0 ✓</span></div>
+      </div>
+      <div class="card" style="padding:14px 18px;">
+        <p style="font-size:15px;"><strong>Quy tắc đọc bit dấu:</strong><br>
+        Bit đầu = <span style="color:var(--teal);">0</span> → số <strong>dương</strong><br>
+        Bit đầu = <span style="color:var(--amber);">1</span> → số <strong>âm</strong></p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num-mark">11 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 12: IEEE 754 ═══ -->
+<div class="slide" id="s12">
+  <div class="label">Phần 3 · Hệ nhị phân</div>
+  <h2>Số thực — Chuẩn IEEE 754 (32 bit)</h2>
+  <div class="col" style="flex:1;gap:20px;">
+    <!-- Diagram -->
+    <div class="card" style="padding:28px 32px;">
+      <svg width="100%" height="80" viewBox="0 0 760 80">
+        <!-- S -->
+        <rect x="0" y="10" width="60" height="48" rx="6" fill="#1C2030" stroke="#2FC4B2" stroke-width="1.5"/>
+        <text x="30" y="32" text-anchor="middle" fill="#2FC4B2" font-family="Be Vietnam Pro" font-weight="700" font-size="16">S</text>
+        <text x="30" y="50" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">1 bit</text>
+        <text x="30" y="72" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">Dấu</text>
+        <!-- E -->
+        <rect x="72" y="10" width="240" height="48" rx="6" fill="#1C2030" stroke="#F0A500" stroke-width="1.5"/>
+        <text x="192" y="32" text-anchor="middle" fill="#F0A500" font-family="Be Vietnam Pro" font-weight="700" font-size="16">E</text>
+        <text x="192" y="50" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">8 bit (Bit 30–23)</text>
+        <text x="192" y="72" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">Số mũ (Exponent)</text>
+        <!-- F -->
+        <rect x="324" y="10" width="436" height="48" rx="6" fill="#1C2030" stroke="#2FC4B2" stroke-width="1"/>
+        <text x="542" y="32" text-anchor="middle" fill="#8896B0" font-family="Be Vietnam Pro" font-weight="700" font-size="16">F</text>
+        <text x="542" y="50" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">23 bit (Bit 22–0)</text>
+        <text x="542" y="72" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">Định trị (Fraction)</text>
+      </svg>
+    </div>
+    <div class="row gap-md">
+      <div class="card col">
+        <div class="badge badge-teal">Công thức</div>
+        <p style="font-size:20px;text-align:center;margin-top:8px;"><strong>V = (−1)<sup>S</sup> × 2<sup>(E−127)</sup> × 1.F</strong></p>
+      </div>
+      <div class="card col">
+        <div class="badge badge-amber">Các giá trị đặc biệt</div>
+        <p style="font-size:15px;line-height:2;margin-top:4px;">
+          <strong>E=0, F=0</strong> → ±0<br>
+          <strong>E=255, F=0</strong> → ±Vô cùng<br>
+          <strong>E=255, F≠0</strong> → NaN (Not a Number)
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num-mark">12 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 13: CPU 8 THÀNH PHẦN ═══ -->
+<div class="slide" id="s13">
+  <div class="label">Phần 4 · Kiến trúc CPU</div>
+  <h2>CPU — 8 thành phần cốt lõi</h2>
+  <div class="row gap-md" style="flex:1;">
+    <div class="col gap-sm" style="flex:1;">
+      <div class="card" style="display:flex;gap:14px;align-items:center;padding:14px 18px;">
+        <span style="font-family:monospace;font-size:15px;font-weight:700;color:var(--teal);width:40px;flex-shrink:0;">PC</span>
+        <div><strong>Program Counter</strong> — trỏ đến địa chỉ <em>lệnh tiếp theo</em></div>
+      </div>
+      <div class="card" style="display:flex;gap:14px;align-items:center;padding:14px 18px;">
+        <span style="font-family:monospace;font-size:15px;font-weight:700;color:var(--teal);width:40px;flex-shrink:0;">IR</span>
+        <div><strong>Instruction Register</strong> — giữ <em>lệnh đang thực thi</em></div>
+      </div>
+      <div class="card" style="display:flex;gap:14px;align-items:center;padding:14px 18px;">
+        <span style="font-family:monospace;font-size:15px;font-weight:700;color:var(--teal);width:40px;flex-shrink:0;">MAR</span>
+        <div><strong>Memory Address Register</strong> — giữ <em>địa chỉ ô nhớ</em> cần đọc/ghi</div>
+      </div>
+      <div class="card" style="display:flex;gap:14px;align-items:center;padding:14px 18px;">
+        <span style="font-family:monospace;font-size:15px;font-weight:700;color:var(--teal);width:40px;flex-shrink:0;">MBR</span>
+        <div><strong>Memory Buffer Register</strong> — đệm dữ liệu đọc/ghi từ bộ nhớ</div>
+      </div>
+    </div>
+    <div class="col gap-sm" style="flex:1;">
+      <div class="card" style="display:flex;gap:14px;align-items:center;padding:14px 18px;">
+        <span style="font-family:monospace;font-size:15px;font-weight:700;color:var(--amber);width:40px;flex-shrink:0;">ACC</span>
+        <div><strong>Accumulator</strong> — lưu <em>kết quả tính toán</em> của ALU</div>
+      </div>
+      <div class="card" style="display:flex;gap:14px;align-items:center;padding:14px 18px;">
+        <span style="font-family:monospace;font-size:15px;font-weight:700;color:var(--amber);width:40px;flex-shrink:0;">PSW</span>
+        <div><strong>Program Status Word</strong> — cờ trạng thái: Z (zero), C (carry), S (sign)</div>
+      </div>
+      <div class="card" style="display:flex;gap:14px;align-items:center;padding:14px 18px;border-color:var(--amber);">
+        <span style="font-family:monospace;font-size:15px;font-weight:700;color:var(--amber);width:40px;flex-shrink:0;">CU</span>
+        <div><strong>Control Unit</strong> — giải mã lệnh, tạo tín hiệu điều khiển</div>
+      </div>
+      <div class="card" style="display:flex;gap:14px;align-items:center;padding:14px 18px;border-color:var(--teal);">
+        <span style="font-family:monospace;font-size:15px;font-weight:700;color:var(--teal);width:40px;flex-shrink:0;">ALU</span>
+        <div><strong>Arithmetic Logic Unit</strong> — thực hiện phép toán số học &amp; logic</div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;padding:10px 18px;background:rgba(47,196,178,0.06);border-color:rgba(47,196,178,0.2);">
+    <p style="font-size:15px;margin:0;">💡 Nhớ theo thứ tự: <strong style="color:var(--teal)">PC</strong> chỉ đường → <strong style="color:var(--teal)">IR</strong> nhận lệnh → <strong style="color:var(--amber)">CU</strong> giải mã → <strong style="color:var(--teal)">MAR/MBR</strong> lấy dữ liệu → <strong style="color:var(--teal)">ALU</strong> tính → <strong style="color:var(--amber)">ACC</strong> giữ kết quả</p>
+  </div>
+  <div class="slide-num-mark">13 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 14: BUS ═══ -->
+<div class="slide" id="s14">
+  <div class="label">Phần 4 · Kiến trúc CPU</div>
+  <h2>Bus hệ thống — 3 loại</h2>
+  <div class="col" style="flex:1;gap:18px;">
+    <div class="card" style="display:flex;gap:24px;align-items:center;padding:22px 28px;">
+      <svg width="48" height="48" viewBox="0 0 48 48" style="flex-shrink:0;">
+        <rect x="4" y="20" width="40" height="8" rx="3" fill="none" stroke="#2FC4B2" stroke-width="2"/>
+        <polygon points="36,16 44,24 36,32" fill="#2FC4B2"/>
+        <circle cx="12" cy="24" r="3" fill="#2FC4B2"/>
+        <circle cx="22" cy="24" r="3" fill="#2FC4B2"/>
+      </svg>
+      <div>
+        <h3 style="color:var(--teal);">Bus địa chỉ</h3>
+        <p>Truyền <strong>địa chỉ</strong> của ô nhớ hoặc thiết bị. Một chiều: CPU → Bộ nhớ. Độ rộng bus xác định dung lượng nhớ tối đa (32-bit bus → 4GB RAM).</p>
+      </div>
+    </div>
+    <div class="card" style="display:flex;gap:24px;align-items:center;padding:22px 28px;">
+      <svg width="48" height="48" viewBox="0 0 48 48" style="flex-shrink:0;">
+        <rect x="4" y="20" width="40" height="8" rx="3" fill="none" stroke="#F0A500" stroke-width="2"/>
+        <polygon points="12,16 4,24 12,32" fill="#F0A500"/>
+        <polygon points="36,16 44,24 36,32" fill="#F0A500"/>
+      </svg>
+      <div>
+        <h3 style="color:var(--amber);">Bus dữ liệu</h3>
+        <p>Truyền <strong>dữ liệu và lệnh</strong>. Hai chiều: CPU ↔ Bộ nhớ ↔ Thiết bị. Độ rộng bus = kích thước word của CPU.</p>
+      </div>
+    </div>
+    <div class="card" style="display:flex;gap:24px;align-items:center;padding:22px 28px;">
+      <svg width="48" height="48" viewBox="0 0 48 48" style="flex-shrink:0;">
+        <rect x="4" y="20" width="40" height="8" rx="3" fill="none" stroke="#8896B0" stroke-width="2"/>
+        <polygon points="12,16 4,24 12,32" fill="#8896B0"/>
+        <polygon points="36,16 44,24 36,32" fill="#8896B0"/>
+        <circle cx="24" cy="10" r="4" fill="none" stroke="#8896B0" stroke-width="1.5"/>
+        <line x1="24" y1="14" x2="24" y2="20" stroke="#8896B0" stroke-width="1.5"/>
+      </svg>
+      <div>
+        <h3>Bus điều khiển</h3>
+        <p>Truyền <strong>tín hiệu điều khiển</strong>: đọc (RD), ghi (WR), xung nhịp (CLK), ngắt (INT)... Cả hai chiều.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num-mark">14 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 15: TẬP LỆNH ═══ -->
+<div class="slide" id="s15">
+  <div class="label">Phần 4 · Kiến trúc CPU</div>
+  <h2>Tập lệnh cơ bản</h2>
+  <div class="row gap-md" style="flex:1;">
+    <div class="col gap-sm">
+      <div class="badge badge-teal">Chuyển dữ liệu</div>
+      <div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--teal);font-family:monospace;font-weight:700;">LOAD X</span><span style="font-size:15px;color:var(--dim);">ACC ← M[X]</span></div>
+      <div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--teal);font-family:monospace;font-weight:700;">STORE X</span><span style="font-size:15px;color:var(--dim);">M[X] ← ACC</span></div>
+      <div class="badge badge-teal" style="margin-top:8px;">Số học</div>
+      <div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--teal);font-family:monospace;font-weight:700;">ADD X</span><span style="font-size:15px;color:var(--dim);">ACC ← ACC + M[X]</span></div>
+      <div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--teal);font-family:monospace;font-weight:700;">SUB X</span><span style="font-size:15px;color:var(--dim);">ACC ← ACC − M[X]</span></div>
+    </div>
+    <div class="col gap-sm">
+      <div class="badge badge-amber">Điều khiển</div>
+      <div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--amber);font-family:monospace;font-weight:700;">JMP X</span><span style="font-size:15px;color:var(--dim);">PC ← X</span></div>
+      <div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--amber);font-family:monospace;font-weight:700;">JZ X</span><span style="font-size:15px;color:var(--dim);">Nếu Z=1: PC ← X</span></div>
+      <div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--amber);font-family:monospace;font-weight:700;">JC X</span><span style="font-size:15px;color:var(--dim);">Nếu C=1: PC ← X</span></div>
+      <div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--amber);font-family:monospace;font-weight:700;">JS X</span><span style="font-size:15px;color:var(--dim);">Nếu S=1: PC ← X</span></div>
+      <div class="badge badge-amber" style="margin-top:8px;">Vào–Ra</div>
+      <div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--amber);font-family:monospace;font-weight:700;">IN / OUT</span><span style="font-size:15px;color:var(--dim);">Đọc / ghi thiết bị</span></div>
+    </div>
+  </div>
+  <div class="slide-num-mark">15 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 16: CHU KỲ LỆNH ═══ -->
+<div class="slide" id="s16">
+  <div class="label">Phần 4 · Kiến trúc CPU</div>
+  <h2>Chu kỳ lệnh — 6 bước lặp mãi không dừng</h2>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+    <svg width="780" height="200" viewBox="0 0 780 200">
+      <!-- Boxes -->
+      <rect x="0"   y="70" width="110" height="60" rx="8" fill="#1C2030" stroke="#2FC4B2" stroke-width="1.5"/>
+      <rect x="134" y="70" width="110" height="60" rx="8" fill="#1C2030" stroke="#2FC4B2" stroke-width="1.5"/>
+      <rect x="268" y="70" width="110" height="60" rx="8" fill="#1C2030" stroke="#2FC4B2" stroke-width="1"/>
+      <rect x="402" y="70" width="110" height="60" rx="8" fill="#1C2030" stroke="#F0A500" stroke-width="1.5"/>
+      <rect x="536" y="70" width="110" height="60" rx="8" fill="#1C2030" stroke="#F0A500" stroke-width="1.5"/>
+      <rect x="670" y="70" width="110" height="60" rx="8" fill="#1C2030" stroke="#F0A500" stroke-width="1"/>
+      <!-- Labels -->
+      <text x="55"  y="98"  text-anchor="middle" fill="#2FC4B2" font-family="Be Vietnam Pro" font-weight="700" font-size="13">1. Nhập lệnh</text>
+      <text x="55"  y="116" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">Fetch</text>
+      <text x="189" y="98"  text-anchor="middle" fill="#2FC4B2" font-family="Be Vietnam Pro" font-weight="700" font-size="13">2. Giải mã</text>
+      <text x="189" y="116" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">Decode</text>
+      <text x="323" y="98"  text-anchor="middle" fill="#8896B0" font-family="Be Vietnam Pro" font-weight="700" font-size="13">3. Tạo địa chỉ</text>
+      <text x="323" y="116" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">Address</text>
+      <text x="457" y="92"  text-anchor="middle" fill="#F0A500" font-family="Be Vietnam Pro" font-weight="700" font-size="13">4. Nhập</text>
+      <text x="457" y="108" text-anchor="middle" fill="#F0A500" font-family="Be Vietnam Pro" font-weight="700" font-size="13">toán hạng</text>
+      <text x="457" y="122" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">Fetch Operand</text>
+      <text x="591" y="98"  text-anchor="middle" fill="#F0A500" font-family="Be Vietnam Pro" font-weight="700" font-size="13">5. Thực thi</text>
+      <text x="591" y="116" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">Execute</text>
+      <text x="725" y="98"  text-anchor="middle" fill="#8896B0" font-family="Be Vietnam Pro" font-weight="700" font-size="13">6. Ghi kết quả</text>
+      <text x="725" y="116" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="11">Write Back</text>
+      <!-- Arrows between boxes -->
+      <polygon points="114,97 124,100 114,103" fill="#2FC4B2"/>
+      <line x1="110" y1="100" x2="124" y2="100" stroke="#2FC4B2" stroke-width="1.5"/>
+      <polygon points="248,97 258,100 248,103" fill="#2FC4B2"/>
+      <line x1="244" y1="100" x2="258" y2="100" stroke="#2FC4B2" stroke-width="1.5"/>
+      <polygon points="382,97 392,100 382,103" fill="#5C6880"/>
+      <line x1="378" y1="100" x2="392" y2="100" stroke="#5C6880" stroke-width="1.5"/>
+      <polygon points="516,97 526,100 516,103" fill="#F0A500"/>
+      <line x1="512" y1="100" x2="526" y2="100" stroke="#F0A500" stroke-width="1.5"/>
+      <polygon points="650,97 660,100 650,103" fill="#F0A500"/>
+      <line x1="646" y1="100" x2="660" y2="100" stroke="#F0A500" stroke-width="1.5"/>
+      <!-- Loop back arrow -->
+      <path d="M 780,100 Q 780,175 390,175 Q 0,175 0,100" fill="none" stroke="#262C42" stroke-width="1.5" stroke-dasharray="6,4"/>
+      <polygon points="4,104 0,100 4,96" fill="#262C42"/>
+      <text x="390" y="192" text-anchor="middle" fill="#5C6880" font-family="Be Vietnam Pro" font-size="12">↺  Lặp lại — CPU không bao giờ nghỉ</text>
+    </svg>
+  </div>
+  <div class="row gap-md">
+    <div class="card col" style="padding:12px 16px;"><p style="font-size:15px;margin:0;"><strong style="color:var(--teal)">Bước 1–2</strong> luôn xảy ra với mọi lệnh</p></div>
+    <div class="card col" style="padding:12px 16px;"><p style="font-size:15px;margin:0;"><strong style="color:var(--muted)">Bước 3–4</strong> chỉ khi cần lấy dữ liệu từ bộ nhớ</p></div>
+    <div class="card col" style="padding:12px 16px;"><p style="font-size:15px;margin:0;"><strong style="color:var(--amber)">Bước 5–6</strong> luôn xảy ra — là mục đích của lệnh</p></div>
+  </div>
+  <div class="slide-num-mark">16 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 17: VI THAO TÁC ═══ -->
+<div class="slide" id="s17">
+  <div class="label">Phần 4 · Kiến trúc CPU</div>
+  <h2>Vi thao tác — Chu kỳ nhập lệnh</h2>
+  <div class="row" style="flex:1;gap:32px;">
+    <div class="col" style="flex:1.1;">
+      <p style="font-size:17px;margin-bottom:16px;">Mỗi bước trong chu kỳ lệnh được chia nhỏ thành <strong>vi thao tác</strong> (micro-operation) — thao tác cơ bản nhất CPU có thể làm trong 1 xung nhịp.</p>
+      <div class="code">
+<span class="c-dim">─── CHU KỲ NHẬP LỆNH (luôn xảy ra) ───</span>
+
+<span class="c-amber">t1:</span> MAR <span class="c-dim">←</span> <span class="c-teal">PC</span>       <span class="c-dim">← PC chỉ địa chỉ lệnh</span>
+<span class="c-amber">t2:</span> MBR <span class="c-dim">←</span> M[MAR]   <span class="c-dim">← đọc lệnh từ bộ nhớ</span>
+    IR  <span class="c-dim">←</span> MBR[OP]  <span class="c-dim">← lưu mã lệnh vào IR</span>
+    PC  <span class="c-dim">←</span> PC + 1   <span class="c-dim">← PC chỉ lệnh tiếp theo</span>
+      </div>
+      <div class="code" style="margin-top:12px;">
+<span class="c-dim">─── THỰC HIỆN ADD X ───</span>
+
+<span class="c-amber">t3:</span> MAR <span class="c-dim">←</span> MBR[addr]  <span class="c-dim">← địa chỉ toán hạng</span>
+<span class="c-amber">t4:</span> MBR <span class="c-dim">←</span> M[MAR]     <span class="c-dim">← đọc giá trị tại X</span>
+<span class="c-amber">t5:</span> ACC <span class="c-dim">←</span> ACC + MBR  <span class="c-dim">← ALU thực hiện cộng</span>
+      </div>
+    </div>
+    <div class="col" style="flex:0.9;gap:14px;">
+      <div class="badge badge-teal">Tín hiệu điều khiển hay gặp</div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="display:flex;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;gap:12px;"><span class="tag tag-teal">C0</span><span style="font-size:15px;">MAR ← PC</span></div>
+        <div style="display:flex;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;gap:12px;"><span class="tag tag-teal">C1</span><span style="font-size:15px;">MBR ← M[MAR]</span></div>
+        <div style="display:flex;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;gap:12px;"><span class="tag tag-teal">C2</span><span style="font-size:15px;">PC ← PC + 1</span></div>
+        <div style="display:flex;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;gap:12px;"><span class="tag tag-teal">C4</span><span style="font-size:15px;">IR ← MBR[op]</span></div>
+        <div style="display:flex;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;gap:12px;"><span class="tag tag-amber">C5</span><span style="font-size:15px;">MAR ← MBR[addr]</span></div>
+        <div style="display:flex;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;gap:12px;"><span class="tag tag-amber">C7</span><span style="font-size:15px;">ACC ← MBR</span></div>
+        <div style="display:flex;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;gap:12px;"><span class="tag tag-amber">C9</span><span style="font-size:15px;">ACC ← ACC + MBR</span></div>
+        <div style="display:flex;padding:10px 14px;align-items:center;gap:12px;"><span class="tag tag-amber">C8</span><span style="font-size:15px;">M[MAR] ← MBR</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num-mark">17 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 18: VÍ DỤ ADD 1000 ═══ -->
+<div class="slide" id="s18">
+  <div class="label">Phần 4 · Kiến trúc CPU</div>
+  <h2>Ví dụ đầy đủ: Thực hiện lệnh ADD 1000</h2>
+  <div class="row" style="flex:1;gap:32px;">
+    <div class="col" style="flex:1.2;">
+      <div class="badge badge-teal">Trạng thái ban đầu: PC=0100, ACC=0101 (=5)</div>
+      <div class="code" style="margin-top:10px;font-size:15px;">
+<span class="c-dim">═══ NHẬP LỆNH ═══</span>
+<span class="c-amber">t1:</span> MAR ← PC           → MAR = <span class="c-teal">0100</span>
+<span class="c-amber">t2:</span> MBR ← M[<span class="c-teal">0100</span>]      → MBR = <span class="c-teal">00111000</span>
+    IR  ← MBR[OP]      → IR  = <span class="c-amber">0011</span> (ADD)
+    PC  ← PC+1         → PC  = <span class="c-teal">0101</span>
+
+<span class="c-dim">═══ THỰC HIỆN ═══</span>
+<span class="c-amber">t3:</span> MAR ← MBR[addr]    → MAR = <span class="c-teal">1000</span>
+<span class="c-amber">t4:</span> MBR ← M[<span class="c-teal">1000</span>]      → MBR = <span class="c-teal">0111</span> (=7)
+<span class="c-amber">t5:</span> ACC ← ACC + MBR    → ACC = <span class="c-teal">0101</span>+<span class="c-teal">0111</span>
+                          = <span class="c-green">1100</span> (=12) ✓
+      </div>
+    </div>
+    <div class="col" style="flex:0.8;gap:14px;">
+      <div class="card accent-teal" style="padding:16px 20px;">
+        <h3 style="margin-bottom:8px;font-size:16px;">Bằng ngôn ngữ thường ngày</h3>
+        <p style="font-size:15px;">Lệnh <code style="color:var(--teal)">ADD 1000</code> nghĩa là:<br><em>"Lấy số đang nằm ở ô nhớ 1000, cộng vào số đang có trong ACC."</em></p>
+      </div>
+      <div class="card" style="padding:16px 20px;">
+        <p style="font-size:15px;"><strong>Nhập lệnh</strong> (t1–t2) giống nhau cho <em>mọi</em> lệnh.<br><br><strong>Thực hiện</strong> (t3–t5) mới là phần riêng của từng lệnh.</p>
+      </div>
+      <div class="card" style="padding:16px 20px;background:rgba(47,196,178,0.06);border-color:rgba(47,196,178,0.2);">
+        <p style="font-size:17px;text-align:center;margin:0;"><strong>5 + 7 = 12</strong> ✓<br><span style="font-size:14px;color:var(--muted)">lưu trong ACC = 1100₂</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num-mark">18 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 19: VI THAO TÁC LOAD & STORE ═══ -->
+<div class="slide" id="s19">
+  <div class="label">Phần 4 · Kiến trúc CPU</div>
+  <h2>Vi thao tác: LOAD X và STORE X</h2>
+  <div class="row" style="flex:1;gap:24px;">
+    <div class="col" style="flex:1;">
+      <div class="badge badge-teal">LOAD X — đọc từ bộ nhớ vào ACC</div>
+      <div class="code" style="margin-top:10px;flex:1;">
+<span class="c-dim">─── Nhập lệnh ───</span>
+C0: MAR ← PC
+C1: MBR ← M[MAR]
+C4: IR  ← MBR[op]
+C2: PC  ← PC + 1
+
+<span class="c-dim">─── Thực hiện ───</span>
+C5: MAR ← MBR[addr]   <span class="c-dim">← địa chỉ X</span>
+C1: MBR ← M[MAR]      <span class="c-dim">← giá trị tại X</span>
+C7: ACC ← MBR          <span class="c-dim">← nạp vào ACC</span>
+      </div>
+    </div>
+    <div class="col" style="flex:1;">
+      <div class="badge badge-amber">STORE X — ghi từ ACC ra bộ nhớ</div>
+      <div class="code" style="margin-top:10px;flex:1;">
+<span class="c-dim">─── Nhập lệnh ───</span>
+C0: MAR ← PC
+C1: MBR ← M[MAR]
+C4: IR  ← MBR[op]
+C2: PC  ← PC + 1
+
+<span class="c-dim">─── Thực hiện ───</span>
+C5: MAR ← MBR[addr]   <span class="c-dim">← địa chỉ X</span>
+C6: MBR ← ACC          <span class="c-dim">← đưa ACC vào đệm</span>
+C8: M[MAR] ← MBR      <span class="c-dim">← ghi ra bộ nhớ</span>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px;padding:12px 18px;display:flex;gap:24px;">
+    <p style="font-size:15px;margin:0;"><strong style="color:var(--teal)">LOAD</strong>: bộ nhớ → ACC &nbsp;|&nbsp; <strong style="color:var(--amber)">STORE</strong>: ACC → bộ nhớ &nbsp;|&nbsp; Nhập lệnh giống hệt nhau, chỉ khác phần thực hiện</p>
+  </div>
+  <div class="slide-num-mark">19 / 20</div>
+</div>
+
+<!-- ═══ SLIDE 20: ÔN THI ═══ -->
+<div class="slide" id="s20">
+  <div class="label">Tóm tắt</div>
+  <h2>Checklist ôn thi — Bài 1</h2>
+  <div class="row gap-md" style="flex:1;">
+    <div class="col gap-sm">
+      <div class="badge badge-teal">Lịch sử &amp; Von Neumann</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;4 thế hệ và công nghệ đặc trưng</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;Mốc: ENIAC 43 · Von Neumann 45 · Intel 4004 71 · IBM PC 81</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;3 nguyên lý Von Neumann</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;3 thành phần + Bus hệ thống</div>
+    </div>
+    <div class="col gap-sm">
+      <div class="badge badge-teal">Hệ nhị phân</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;Chuyển thập phân → nhị phân (phần nguyên)</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;Chuyển thập phân → nhị phân (phần thập phân)</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;Tính bù 2 và kiểm tra bằng phép cộng</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;Cấu trúc IEEE 754 và công thức</div>
+    </div>
+    <div class="col gap-sm">
+      <div class="badge badge-amber">CPU &amp; Chu kỳ lệnh</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;Chức năng 8 thành phần CPU</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;6 bước chu kỳ lệnh theo thứ tự</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;Vi thao tác chu kỳ nhập lệnh (t1, t2)</div>
+      <div class="card" style="padding:10px 16px;font-size:15px;">☐ &nbsp;Vi thao tác ADD X, LOAD X, STORE X</div>
+    </div>
+  </div>
+  <div class="slide-num-mark">20 / 20</div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-counter" id="counter">1 / 20</div>
+  <div class="nav-btns">
+    <button class="nav-btn" id="prev" onclick="go(-1)" disabled>← Trước</button>
+    <button class="nav-btn" id="next" onclick="go(1)">Tiếp →</button>
+  </div>
+</div>
+
+<script>
+const TOTAL = 20;
+let cur = 1;
+
+function go(dir) {
+  document.getElementById('s'+cur).classList.remove('active');
+  cur = Math.max(1, Math.min(TOTAL, cur + dir));
+  document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('counter').textContent = cur + ' / ' + TOTAL;
+  document.getElementById('prev').disabled = cur === 1;
+  document.getElementById('next').disabled = cur === TOTAL;
+  document.getElementById('prog').style.width = ((cur-1)/(TOTAL-1)*100) + '%';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') go(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp') go(-1);
+});
+</script>
+</body>
+</html>
